@@ -19,21 +19,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="py-3">
-                                <p class="text-xs  px-3 font-weight-bold mb-0">01</p>
-                            </td>
-                            <td class="py-3">
-                                <p class="text-xs font-weight-bold mb-0">PT Bercahaya</p>
-                            </td>
-                            <td class="py-3">
-                                <p class="text-xs px-3 font-weight-bold mb-0">Semen</p>
-                            </td>
-                            <td class="py-3">
-                                <p class="text-xs px-3 font-weight-bold mb-0">On Progress QC</p>
-                            </td>
-                        </tr>
-
+                        @foreach ($supplies as $supply)
+                            @foreach ($supply->barangs as $index => $barang)
+                                <tr>
+                                    @if ($index === 0)
+                                        <td class="py-3" rowspan="{{ $supply->barangs->count() }}">
+                                            <p class="text-xs  px-3 font-weight-bold mb-0">{{ $supply->no_antrian }}</p>
+                                        </td>
+                                        <td class="py-3" rowspan="{{ $supply->barangs->count() }}">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $supply->nama_perusahaan }}</p>
+                                        </td>
+                                    @endif
+                                    <td class="py-3">
+                                        <p class="text-xs font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
+                                    </td>
+                                    <td class="py-3">
+                                        <p class="text-xs font-weight-bold mb-0 mx-3">{{ $supply->no_antrian }}</p>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endforeach
                     </tbody>
                 </table>
             </div>

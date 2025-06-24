@@ -14,10 +14,12 @@ return new class extends Migration
             Schema::create('supply', function (Blueprint $table) {
                 $table->id();
                 $table->date('tanggal');
+                $table->time('jam');
                 $table->string('nama_driver');
                 $table->string('nopol');
                 $table->string('nama_perusahaan');
                 $table->string('no_surat_jalan')->nullable();
+                $table->integer('no_antrian');
                 $table->timestamps();
             });
         }
