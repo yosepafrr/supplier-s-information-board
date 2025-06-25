@@ -21,10 +21,14 @@ class ProsesController extends Controller
         return view("supply.user.user-test");
     }
 
-    function monitor_user()
+    function monitor_user(Request $request)
     {
-        $supplies = Supply::with('barangs')->get();
+        $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
 
+        $supplies = Supply::with('barangs')
+            ->whereDate('tanggal', $tanggal)
+            ->orderBy('no_antrian')
+            ->get();
 
         return view("supply.user.user-monitor", compact("supplies"));
     }
@@ -41,7 +45,7 @@ class ProsesController extends Controller
 
         try {
             // MEMBUAT NOMOR ANTRIAN YANG RESET DI JAM TERTENTU
-            // Jam reset: setiap hari jam 16:00
+            // Jam reset: setiap hari jam 23:59
             $now = Carbon::now('Asia/Jakarta');
             $resetTime = Carbon::today('Asia/Jakarta')->setTIme(23, 59);
 
@@ -69,7 +73,7 @@ class ProsesController extends Controller
             logger('Mulai menyimpan Supply');
 
             $supply = Supply::create([
-                'tanggal' => now(),
+                'tanggal' => now()->toDateString(),
                 'jam' => now(),
                 'nama_driver' => $request->nama_driver,
                 'nopol' => $request->nopol,
