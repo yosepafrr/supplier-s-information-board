@@ -25767,11 +25767,11 @@ hr.horizontal.gray-light {
 
 @media (max-width: 7680px) {
   .g-sidenav-show.rtl .sidenav {
-    transform: translateX(15.5rem);
+    transform: translateX(20rem);
   }
 
   .g-sidenav-show:not(.rtl) .sidenav {
-    transform: translateX(-15.5rem);
+    transform: translateX(-20rem);
   }
 
   .g-sidenav-show .sidenav.fixed-start+.main-content {
@@ -29164,3 +29164,36 @@ pre[class*=language-] {
 }
 
 /*# sourceMappingURL=dashboard-free.css.map */
+
+
+/* MODIFIKASI */
+
+#sidenav-main {
+  width: 240px !important;
+  max-width: 240px !important;
+  min-width: 240px !important;
+}
+
+/* Ukuran sidebar aktif */
+body.g-sidenav-show #sidenav-main {
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+/* Konten utama geser ke kanan */
+body.g-sidenav-show .main-content{
+  margin-left: 250px;
+  transition: all 0.3s ease;
+}
+
+/* Sidebar collapse */
+body.g-sidenav-hidden #sidenav-main {
+  width: 0;
+  overflow: hidden
+}
+
+.ml-10rem{
+  margin-left: 10rem !important;
+}
+
+/* MODIFIKASI */

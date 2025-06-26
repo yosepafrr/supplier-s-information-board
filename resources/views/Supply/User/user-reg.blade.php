@@ -42,7 +42,7 @@
         <h1 class="h4 font-weight-bold mb-0">REGISTRASI PENGAMBILAN TIKET</h1>
         <p>Silahkan isi data-data dibawah.</p>
 
-        <div class="bg-white h-screen w-full card p-3">
+        <div class="bg-white h-screen w-full card p-3 mb-5">
             <form action="{{ route('supply.user.submit') }}" method="POST">
                 @csrf
 
@@ -136,18 +136,18 @@
                     row.classList.add('barang-row', 'mb-2');
 
                     row.innerHTML = `
-                                        <div class="barang-form-grup">
-                                            <h5 class="h5 mt-2">Barang ${index + 1}</h5>
-                                            <div class="input-group input-group-lg input-group-outline mb-3">
-                                                <label class="form-label">Nama Barang</label>
-                                                <input type="text" name="barang[${index}][nama_barang]" class="form-control form-control-lg">
-                                            </div>
-                                            <div class="input-group input-group-lg input-group-outline my-3">
-                                                <label class="form-label">Jumlah Barang</label>
-                                                <input type="text" name="barang[${index}][jumlah_barang]" class="form-control form-control-lg">
-                                            </div>
-                                        </div>
-                                    `;
+                                                <div class="barang-form-grup">
+                                                    <h5 class="h5 mt-2">Barang ${index + 1}</h5>
+                                                    <div class="input-group input-group-lg input-group-outline mb-3">
+                                                        <label class="form-label">Nama Barang</label>
+                                                        <input type="text" name="barang[${index}][nama_barang]" class="form-control form-control-lg">
+                                                    </div>
+                                                    <div class="input-group input-group-lg input-group-outline my-3">
+                                                        <label class="form-label">Jumlah Barang</label>
+                                                        <input type="text" name="barang[${index}][jumlah_barang]" class="form-control form-control-lg">
+                                                    </div>
+                                                </div>
+                                            `;
 
                     container.appendChild(row);
 
@@ -180,10 +180,6 @@
                 });
             </script>
             {{-- FUNGSI TAMBAH FORM BARANG --}}
-
-            <script>
-
-            </script>
 
         </div>
     </div>

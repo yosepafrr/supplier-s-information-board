@@ -11,6 +11,20 @@ use App\Http\Controllers\Controller;
 
 class ProsesController extends Controller
 {
+    public function cekUpdateTerakhir(Request $request)
+    {
+        $tanggal = $request->tanggal ?? Carbon::today('Asia/Jakarta');
+
+        $lastUpdate = Supply::whereDate('tanggal', $tanggal)
+            ->with('barangs')
+            ->latest('updated_at')
+            ->first();
+
+        return response()->json([
+            'last_updated_at' => optional($lastUpdate)->updated_at?->toIso8601String(),
+        ]);
+    }
+
     function dashboard()
     {
         return view("supply.dashboard");
@@ -30,7 +44,20 @@ class ProsesController extends Controller
             ->orderBy('no_antrian')
             ->get();
 
-        return view("supply.user.user-monitor", compact("supplies"));
+        $flatenned = collect();
+        foreach ($supplies as $supply) {
+            foreach ($supply->barangs as $barang) {
+                $flatenned->push([
+                    'supply' => $supply,
+                    'barang' => $barang,
+                ]);
+            }
+        }
+
+        $batches = $flatenned->chunk(7);
+
+
+        return view("supply.user.user-monitor", ['batches' => $batches]);
     }
 
     function registrasi()
