@@ -54,7 +54,7 @@ class ProsesController extends Controller
             }
         }
 
-        $batches = $flatenned->chunk(7);
+        $batches = $flatenned->chunk(5);
 
 
         return view("supply.user.user-monitor", ['batches' => $batches]);

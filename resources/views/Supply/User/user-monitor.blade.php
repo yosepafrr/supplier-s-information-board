@@ -20,119 +20,131 @@
         @php
             $printedSuppliers = [];
         @endphp
-        <div class="card mb-4 max-height-vh-70">
-            <div class="table-responsive" id="antrian-container">
-                @foreach ($batches as $batchIndex => $batch)
-                    <table class="table align-items-center mb-0 batch-table" style="{{ $loop->first ? '' : 'display:none' }}">
-                        <thead>
-                            <tr>
-                                <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7">No Antrian</th>
-                                <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 ps-2">Supplier
-                                </th>
-                                <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7">
-                                    Nama Barang</th>
-                                <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7">Status
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $supplyRowspanCounter = [];
-                                foreach ($batch as $item) {
-                                    $id = $item['supply']->id;
-                                    if (!isset($supplyRowspanCounter[$id])) {
-                                        $supplyRowspanCounter[$id] = 0;
-                                    }
-                                    $supplyRowspanCounter[$id]++;
-                                }
-                                $printed = [];
-                            @endphp
-                            @foreach ($batch as $item)
-                                @php
-                                    $supply = $item['supply'];
-                                    $barang = $item['barang'];
-                                @endphp
-                                <tr>
-                                    @if (!in_array($supply->id, $printed))
-                                        <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                            <p class=" px-5 font-weight-bold mb-0">{{ $supply->no_antrian }}</p>
-                                        </td>
-                                        <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                            <p class="font-weight-bold mb-0">{{ $supply->nama_perusahaan }}</p>
-                                        </td>
-                                        @php
-                                            $printed[] = $supply->id;
-                                        @endphp
-                                    @endif
-                                    <td class="py-3">
-                                        <p class="text-xs font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
-                                    </td>
-                                    <td class="py-3">
-                                        <p class="text-xs font-weight-bold mb-0 mx-3">{{ $supply->no_antrian }}</p>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endforeach
-            </div>
+        <div class="position-relative max-height-vh-80" id="antrian-container">
+            @foreach ($batches as $batchIndex => $batch)
+                <div
+                    class="d-flex flex-wrap batch-view mb-4 position-absolute top-0 start-0 w-100 {{ $loop->first ? 'active' : 'hidden' }}">
+                    @php
+                        $printed = [];
+                    @endphp
+                    @foreach ($batch as $index => $item)
+                        @php
+                            $supply = $item['supply'];
+                            $barang = $item['barang'];
+                            $isFirst = !in_array($supply->id, $printed);
+                            if ($isFirst)
+                                $printed[] = $supply->id;
+                        @endphp
+
+                        @if ($loop->first)
+                            <div class="p-2 w-100">
+                                <div class="card border-success mb-3 h-100">
+                                    <div class="card-header bg-transparent border-success">
+                                        <span class="text-2xl">Antrian {{ $supply->no_antrian }}</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-title text-9xl my-0 text-bold text-success">{{ $supply->nama_perusahaan }}</p>
+                                        <p class="card-text text-3xl my-0">{{ $barang->nama_barang }}</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-success">
+                                        {{ $supply->no_antrian }}
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="p-2" style="width: 25%;">
+                                <div class="card border-success mb-3 h-100">
+                                    <div class="card-header bg-transparent border-success">
+                                        Antrian {{ $supply->no_antrian }}
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title text-2xl text-success my-0">{{ $supply->nama_perusahaan }}</h5>
+                                        <p class="card-text text-xl my-0">{{ $barang->nama_barang }}</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-success">
+                                        {{ $supply->no_antrian }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            @endforeach
         </div>
-    </div>
 
-    {{-- FUNGSI REFRESH TABLE --}}
-    <script>
-        let current = 0;
-        const tables = document.querySelectorAll('.batch-table');
+        <script>
+            let current = 0;
+            const tables = document.querySelectorAll('.batch-view');
 
-        if (tables.length > 1) {
-            setInterval(() => {
-                tables[current].style.opacity = 0;
-
-                setTimeout(() => {
-                    tables[current].style.display = 'none';
-                    current = (current + 1) % tables.length;
-                    tables[current].style.display = '';
+            if (tables.length > 1) {
+                setInterval(() => {
                     tables[current].style.opacity = 0;
+
                     setTimeout(() => {
-                        tables[current].style.opacity = 1;
-                    }, 50);
-                }, 500);
-            }, 7000);
-        }
-    </script>
-    <style>
-        .batch-table {
-            transition: opacity 0.5s ease;
-        }
-    </style>
-    {{-- FUNGSI REFRESH TABLE --}}
-
-
-    {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
-    <script>
-        let lastKnownUpdate = null;
-        const tanggal = document.querySelector('input[name="tanggal"]').value;
-
-        async function checkForUpdate() {
-            try {
-                const res = await fetch(`/monitor/check-update?tanggal=${tanggal}`);
-                const data = await res.json();
-
-                if (!lastKnownUpdate) {
-                    lastKnownUpdate = data.last_updated_at;
-                } else if (lastKnownUpdate !== data.last_updated_at) {
-                    location.reload(); // data baru terdeteksi, reload halaman
-                }
-            } catch (e) {
-                console.error("Gagal cek update:", e);
+                        tables[current].style.display = 'none';
+                        current = (current + 1) % tables.length;
+                        tables[current].style.display = '';
+                        tables[current].style.opacity = 0;
+                        setTimeout(() => {
+                            tables[current].style.opacity = 1;
+                        }, 50);
+                    }, 500);
+                }, 7000);
             }
-        }
+        </script>
+        <style>
+            .batch-view {
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .batch-view.active {
+                opacity: 1;
+                z-index: 1;
+                pointer-events: auto;
+            }
+
+            .batch-view.hidden {
+                opacity: 0;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            #antrian-container {
+                position: relative;
+                min-height: 80vh;
+                overflow: hidden;
+            }
+        </style>
 
 
-        // Cek setiap 5 detik
-        setInterval(checkForUpdate, 5000);
-    </script>
-    {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
+        {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
+        <script>
+            let lastKnownUpdate = null;
+            const tanggal = document.querySelector('input[name="tanggal"]').value;
+
+            async function checkForUpdate() {
+                try {
+                    const res = await fetch(`/monitor/check-update?tanggal=${tanggal}`);
+                    const data = await res.json();
+
+                    if (!lastKnownUpdate) {
+                        lastKnownUpdate = data.last_updated_at;
+                    } else if (lastKnownUpdate !== data.last_updated_at) {
+                        location.reload(); // data baru terdeteksi, reload halaman
+                    }
+                } catch (e) {
+                    console.error("Gagal cek update:", e);
+                }
+            }
+
+
+            // Cek setiap 5 detik
+            setInterval(checkForUpdate, 5000);
+        </script>
+        {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
 
 
 
