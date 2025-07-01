@@ -72,6 +72,8 @@
             @endforeach
         </div>
 
+
+        {{-- FUNGSI REFRESH OTOMATIS SETIAP 7 DETIK --}}
         <script>
             let current = 0;
             const tables = document.querySelectorAll('.batch-view');
@@ -118,6 +120,8 @@
                 overflow: hidden;
             }
         </style>
+        {{-- FUNGSI REFRESH OTOMATIS SETIAP 7 DETIK --}}
+
 
 
         {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
