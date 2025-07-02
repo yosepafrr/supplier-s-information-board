@@ -27063,13 +27063,17 @@ hr.horizontal.gray-light {
   margin: 0;
 }
 
+
 .table td .progress .progress-bar {
   height: 3px;
 }
 
-.table td,
+
 .table th {
   white-space: nowrap;
+}
+.table td {
+  vertical-align: top !important;
 }
 
 .table.align-items-center td,

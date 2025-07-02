@@ -3,9 +3,10 @@
 @section('konten')
     <div class="mt-2 mx-5">
         <div class="d-flex align-items-center justify-content-between w-full">
-            <div>
+            <div class="mx-3">
                 <h1 class="h4 font-weight-bold mb-0">Monitoring Antrian Barang</h1>
-                {{-- <p>Silahkan isi data-data dibawah.</p> --}}
+                <span class="fst-italic">Urutan antrian dari kiri atas ke kanan
+                    bawah.</span>
             </div>
             <div>
                 <form method="GET" action="{{ route('supply.user.user-monitor') }}" id="filter-form">
@@ -36,15 +37,17 @@
                                 $printed[] = $supply->id;
                         @endphp
 
-                        @if ($loop->first)
-                            <div class="p-2 w-100">
+                        @if ($loop->index < 2)
+                            <div class="p-2 w-50">
                                 <div class="card border-success mb-3 h-100">
                                     <div class="card-header bg-transparent border-success">
                                         <span class="text-2xl">Antrian {{ $supply->no_antrian }}</span>
                                     </div>
                                     <div class="card-body">
-                                        <p class="card-title text-9xl my-0 text-bold text-success">{{ $supply->nama_perusahaan }}</p>
-                                        <p class="card-text text-3xl my-0">{{ $barang->nama_barang }}</p>
+                                        <p class="card-title text-6xl my-0 text-bold text-success">{{ $supply->nama_perusahaan }}</p>
+                                        <p class="card-title text-4xl text-bold">{{ $supply->nama_driver }} | {{ $supply->nopol}}
+                                        </p>
+                                        <p class="card-text text-2xl">{{ $barang->nama_barang }} | {{ $barang->jumlah_barang }}</p>
                                     </div>
                                     <div class="card-footer bg-transparent border-success">
                                         {{ $supply->no_antrian }}
@@ -53,13 +56,16 @@
                             </div>
                         @else
                             <div class="p-2" style="width: 25%;">
-                                <div class="card border-success mb-3 h-100">
+                                <div class="card border-secondary mb-3 h-100">
                                     <div class="card-header bg-transparent border-success">
                                         Antrian {{ $supply->no_antrian }}
                                     </div>
                                     <div class="card-body">
                                         <h5 class="card-title text-2xl text-success my-0">{{ $supply->nama_perusahaan }}</h5>
-                                        <p class="card-text text-xl my-0">{{ $barang->nama_barang }}</p>
+                                        <p class="card-title text-md text-bold">{{ $supply->nama_driver }} | {{ $supply->nopol}}
+                                        </p>
+                                        <p class="card-text text-sm">{{ $barang->nama_barang }} | {{ $barang->jumlah_barang }}</p>
+
                                     </div>
                                     <div class="card-footer bg-transparent border-success">
                                         {{ $supply->no_antrian }}

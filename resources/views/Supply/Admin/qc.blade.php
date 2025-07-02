@@ -4,7 +4,7 @@
     <div class="mt-2 mx-5">
         <div class="d-flex align-items-center justify-content-between w-full">
             <div>
-                <h1 class="h4 font-weight-bold mb-0">Monitoring Antrian Barang</h1>
+                <h1 class="h4 font-weight-bold mb-0">Admin Quality Control</h1>
             </div>
             <div>
                 <form method="GET" action="{{ route('supply.admin.qc') }}" id="filter-form">
@@ -22,15 +22,28 @@
                 <table class="table align-items-center mb-0">
                     <thead>
                         <tr>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-10">No Antrian
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-5">Antrian
                             </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-20">Supplier
+                            <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-5">Jam
+                                Masuk
                             </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-20">Nama Barang
+                            <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-5">Nomor
+                                Polisi
                             </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">Aksi
+                            <th class="text-uppercase text-xxs text-secondary px-2 mx-3 font-weight-bolder opacity-7 w-15">
+                                Supplier
                             </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-10">Status
+                            <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-5">Nama
+                                Driver
+                            </th>
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-5">Nama Barang
+                            </th>
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-10">Jumlah
+                                Barang
+                            </th>
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-10">Aksi
+                            </th>
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10">Status
                             </th>
                             <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">
                                 Catatan</th>
@@ -57,10 +70,19 @@
                             <tr>
                                 @if (!in_array($supply->id, $printed))
                                     <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="px-5 font-weight-bold mb-0">{{ $supply->no_antrian }}</p>
+                                        <p class="font-weight-bold mb-0" style="padding-left: 1.5rem;">{{ $supply->no_antrian }}</p>
                                     </td>
-                                    <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
+                                    <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
+                                        <p class="font-weight-bold mb-0">{{ $supply->jam }}</p>
+                                    </td>
+                                    <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
+                                        <p class="font-weight-bold mb-0">{{ $supply->nopol }}</p>
+                                    </td>
+                                    <td class="py-3 px-" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
                                         <p class="font-weight-bold mb-0">{{ $supply->nama_perusahaan }}</p>
+                                    </td>
+                                    <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
+                                        <p class="font-weight-bold mb-0">{{ $supply->nama_driver }}</p>
                                     </td>
                                     @php
                                         $printed[] = $supply->id;
@@ -69,11 +91,18 @@
                                 <td class="py-3">
                                     <p class="font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
                                 </td>
-                                <td class="py-3 d-flex gap-3 px-0">
-                                    <button type="button" class="btn btn-outline-primary">Panggil</button>
-                                    <button type="button" class="btn btn-outline-success px-4">Hasil</button>
-                                </td>
                                 <td class="py-3">
+                                    <p class="font-weight-bold mb-0 mx-3">{{ $barang->jumlah_barang }}</p>
+                                </td>
+                                <td class="py-3 px-0">
+                                    <button type="button" class="btn btn-outline-primary">Panggil</button>
+                                    <button type="button" class="btn btn-outline-success px-4 mx-2" data-bs-toggle="modal"
+                                        data-bs-target="#hasilModal" data-barang-id="{{ $barang->id }}"
+                                        onclick="setBarangId(this)">
+                                        Hasil
+                                    </button>
+                                </td>
+                                <td class="py-3 px-4">
                                     <p class="font-weight-bold mb-0">
                                         @if ($barang->status)
                                             {{ $barang->status }}
@@ -82,12 +111,14 @@
                                         @endif
                                     </p>
                                 </td>
-                                <td class="py-3">
+                                <td class="py-3"
+                                    style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
+                                                                                                                                                                                                                                                                                                                                                                                ">
                                     <p class="font-weight-bold mb-0">
                                         @if ($barang->keterangan)
                                             {{ $barang->keterangan }}
                                         @else
-                                            <span class="fst-italic opacity-7">Tanpa keterangan.</span>
+                                            <span class="fst-italic opacity-7">Tanpa catatan.</span>
                                         @endif
                                     </p>
                                 </td>
@@ -98,4 +129,112 @@
             </div>
         </div>
     </div>
+
+
+    {{-- MODAL BUTTON --}}
+    <div class="modal fade" id="hasilModal" tabindex="-1" aria-labelledby="hasilModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-success">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="hasilModalLabel">Pilih Aksi Hasil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body text-center d-flex justify-content-center">
+                    <form id="hasilForm" method="POST" action="{{ route('supply.admin.qc.updateStatus') }}">
+                        @csrf
+                        <input type="hidden" name="barang_id" id="hasilModal-barang-id">
+                        <button type="submit" name="status" value="Ok" class="btn btn-success m-2">OK</button>
+                    </form>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-danger" onclick="confirmCatatanFromModal('Not Good')"
+                            data-bs-dismiss="modal">Not Good</button>
+
+                        <button type="button" class="btn btn-warning mx-1" onclick="confirmCatatanFromModal('Hold')"
+                            data-bs-dismiss="modal">Hold</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL CATATAN / KETERANGAN --}}
+    <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ route('supply.admin.qc.updateStatus') }}">
+                @csrf
+                <input type="hidden" name="barang_id" id="konfirmasiModal-barang-id">
+                <input type="hidden" name="status" id="modal-status">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambahkan Catatan?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah Anda ingin menambahkan catatan?</p>
+                        <div class="input-group input-group-dynamic mb-4 d-none" id="input-catatan-wrapper">
+                            <textarea class="form-control" name="catatan" id="catatan" placeholder="Ketik catatan disini"
+                                aria-label="Username" aria-describedby="basic-addon1" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="skipCatatan()">Tidak</button>
+                        <button type="button" class="btn btn-primary" onclick="showCatatanInput()">Ya</button>
+                        <button type="submit" class="btn btn-success d-none" id="submit-catatan-btn">Kirim</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- MODAL CATATAN / KETERANGAN --}}
+
+
+    {{-- MODAL BUTTON --}}
+
+    {{-- MODAL JS --}}
+    <script>
+        let currentBarangId = null;
+
+        function setBarangId(button) {
+            const barangId = button.getAttribute('data-barang-id');
+            document.getElementById('hasilModal-barang-id').value = barangId;
+            currentBarangId = barangId; // simpan untuk modal catatan
+        }
+
+
+        // logic modal catatan
+        let selectedId = null;
+        let selectedStatus = null;
+
+        function confirmCatatanFromModal(status) {
+            if (!currentBarangId) {
+                alert('ID tidak ditemukan.');
+                return;
+            }
+
+            document.getElementById('konfirmasiModal-barang-id').value = currentBarangId;
+            document.getElementById('modal-status').value = status;
+            document.getElementById('input-catatan-wrapper').classList.add('d-none');
+            document.getElementById('submit-catatan-btn').classList.add('d-none');
+
+            const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
+            modal.show();
+        }
+
+        function showCatatanInput() {
+            document.getElementById('input-catatan-wrapper').classList.remove('d-none');
+            document.getElementById('submit-catatan-btn').classList.remove('d-none');
+        }
+
+        function skipCatatan() {
+            // langsung kirim form tanpa catatan
+            document.getElementById('catatan').value = '';
+            document.querySelector('#modalKonfirmasi form').submit();
+
+        }
+    </script>
+
+    {{-- MODAL JS --}}
+
 @endsection

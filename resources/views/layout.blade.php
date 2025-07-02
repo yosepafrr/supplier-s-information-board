@@ -153,9 +153,10 @@
                     </div>
                     <ul class="navbar-nav  justify-content-end">
                         <li class="nav-item">
-                            <a href="javascript:;" class="nav-link text-body p-0 position-relative">
-                                <i class="material-symbols-rounded me-sm-1">
-                                    account_circle
+                            <a href="javascript:;" class="nav-link text-body p-0 position-relative"
+                                onclick="toggleFullscreen()" id="fullscreen-link">
+                                <i class="material-symbols-rounded me-sm-1" id="icon-fullscreen">
+                                    fullscreen
                                 </i>
                             </a>
                         </li>
@@ -239,6 +240,26 @@
 <script src="../../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="../../assets/js/plugins/chartjs.min.js"></script>
 <script src="../../assets/js/material-dashboard.min.js?v=3.2.0"></script>
+
+
+{{-- FUNGSI TOGGLE FULLSCREEN --}}
+<script>
+    function toggleFullscreen() {
+        icon = document.getElementById('icon-fullscreen')
+
+        const link = document.getElementById("fullscreen-link");
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().then(() => {
+                icon.innerText = "fullscreen_exit";
+            });
+        } else {
+            document.exitFullscreen().then(() => {
+                icon.innerText = "fullscreen";
+            });
+        }
+    }
+</script>
+{{-- FUNGSI TOGGLE FULLSCREEN --}}
 
 {{-- FUNGSI COLLAPSE NAVBAR --}}
 <script>
