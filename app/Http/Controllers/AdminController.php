@@ -31,6 +31,30 @@ class AdminController extends Controller
 
         return view("supply.admin.qc", compact('flatData', 'tanggal'));
     }
+
+    public function ppic(Request $request)
+    {
+        $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
+
+        $supplies = Supply::with('barangs')
+            ->whereDate('tanggal', $tanggal)
+            ->orderBy('no_antrian')
+            ->get();
+
+        $flatData = collect();
+        foreach ($supplies as $supply) {
+            foreach ($supply->barangs as $barang) {
+                if ($barang->status === 'Ok') {
+                    $flatData->push([
+                        'supply' => $supply,
+                        'barang' => $barang,
+                    ]);
+                }
+            }
+        }
+
+        return view("supply.admin.ppic", compact('flatData', 'tanggal'));
+    }
     public function updateStatusOnQc(Request $request)
     {
         $barang = Barang::findOrFail($request->barang_id);
@@ -39,5 +63,25 @@ class AdminController extends Controller
         $barang->save();
 
         return redirect()->back()->with('success', 'Status barang berhasil diperbarui.');
+    }
+
+    public function approve(Request $request)
+    {
+        // Update status barang
+        $barang = Barang::findOrFail($request->barang_id);
+        $barang->status_on_ppic = 'Approved';
+        $barang->save();
+
+        return redirect()->back()->with('success', 'Status barang berhasil disetujui.');
+    }
+
+    public function inputSuratJalan(Request $request)
+    {
+        // Update Supply
+        $supply = Supply::findOrFail($request->supply_id);
+        $supply->no_surat_jalan = $request->no_surat_jalan;
+        $supply->save();
+
+        return redirect()->back()->with('success', 'Nomor surat jalan berhasil disimpan.');
     }
 }

@@ -106,6 +106,12 @@
                         <span class="nav-link-text ms-1">Quality Control</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('/supply/admin/ppic') }}">
+                        <i class="material-symbols-rounded opacity-5">inventory_2</i>
+                        <span class="nav-link-text ms-1">PPIC</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </aside>

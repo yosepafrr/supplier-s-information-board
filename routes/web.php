@@ -18,4 +18,7 @@ Route::get('/monitor/check-update', [ProsesController::class, 'cekUpdateTerakhir
 
 // Admin routes
 Route::get('/supply/admin/qc', [AdminController::class, 'qc'])->name('supply.admin.qc');
+Route::get('/supply/admin/ppic', [AdminController::class, 'ppic'])->name('supply.admin.ppic');
 Route::post('/supply/admin/qc/update-status', [AdminController::class, 'updateStatusOnQc'])->name('supply.admin.qc.updateStatus');
+Route::post('/supply/admin/ppic/approve', [AdminController::class, 'approve'])->name('supply.admin.ppic.approve');
+Route::post('/supply/admin/ppic/input-nsj', [AdminController::class, 'inputSuratJalan'])->name('supply.admin.ppic.input-nsj');

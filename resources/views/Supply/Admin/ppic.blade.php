@@ -4,10 +4,10 @@
     <div class="mt-2 mx-5">
         <div class="d-flex align-items-center justify-content-between w-full">
             <div>
-                <h1 class="h4 font-weight-bold mb-0">Admin Quality Control</h1>
+                <h1 class="h4 font-weight-bold mb-0">Admin PPIC (Production Planning and Inventory Control)</h1>
             </div>
             <div>
-                <form method="GET" action="{{ route('supply.admin.qc') }}" id="filter-form">
+                <form method="GET" action="{{ route('supply.admin.ppic') }}" id="filter-form">
                     <div class="input-group input-group-outline my-3">
                         <input type="date" class="form-control" name="tanggal"
                             value="{{ request('tanggal') ?? \Carbon\Carbon::now()->format('Y-m-d') }}"
@@ -30,14 +30,16 @@
                             <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-10">Nama
                                 Driver
                             </th>
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10 px-2">Nomor Surat Jalan
+                            </th>
                             <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-10">Nama Barang
                             </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">Aksi
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-15">Aksi
                             </th>
                             <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10">Status
                             </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">
-                                Catatan</th>
+                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-10">
+                                </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +71,19 @@
                                     <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
                                         <p class="font-weight-bold mb-0">{{ $supply->nama_driver }}</p>
                                     </td>
+                                    <td class="py-3" style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                        <p class="font-weight-bold mb-0">
+                                            @if ($supply->no_surat_jalan)
+                                                {{ $supply->no_surat_jalan }}
+                                            @else
+                                            <button type="button" class="btn btn-outline-secondary px-4"
+                                            data-bs-toggle="modal" data-bs-target="#approveModal" data-barang-id="{{ $barang->id }}" data-supply-id="{{ $supply->id }}"
+                                            onclick="setBarangId(this)">
+                                            Input Nomor
+                                            </button>    
+                                            @endif
+                                        </p>
+                                        </td>    
                                     @php
                                         $printed[] = $supply->id;
                                     @endphp
@@ -77,40 +92,34 @@
                                     <p class="font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
                                 </td>
                                 <td class="py-3 px-0">
-                                    <!-- Button trigger modal -->
+                                    <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                                         data-bs-target="#detailModal"
                                         onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}')">
                                         Detail Informasi
                                     </button>
-                                    <button style="margin-left: 5px;" type="button"
-                                        class="btn btn-outline-primary">Panggil</button>
-                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-success px-4"
-                                        data-bs-toggle="modal" data-bs-target="#hasilModal" data-barang-id="{{ $barang->id }}"
-                                        onclick="setBarangId(this)">
-                                        Hasil
-                                    </button>
+                                    <form method="POST" action="{{ route('supply.admin.ppic.approve') }}">
+                                        @csrf
+                                        <input type="hidden" name="barang_id" value="{{ $barang->id }}">
+                                        <button type="submit" class="btn btn-outline-success">Approve</button>
+                                    </form>
+                                </div>
                                 </td>
                                 <td class="py-3 px-4">
                                     <p class="font-weight-bold mb-0">
-                                        @if ($barang->status)
-                                            {{ $barang->status }}
+                                        @if ($barang->status_on_ppic)
+                                            {{ $barang->status_on_ppic }}
                                         @else
                                             <span class="fst-italic opacity-7">Belum ada status.</span>
                                         @endif
                                     </p>
                                 </td>
-                                <td class="py-3"
-                                    style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
-                                    <p class="font-weight-bold mb-0">
-                                        @if ($barang->keterangan)
-                                            {{ $barang->keterangan }}
-                                        @else
-                                            <span class="fst-italic opacity-7">Tanpa catatan.</span>
-                                        @endif
-                                    </p>
+                                <td class="py-3 px-0">
+                                    <button type="button" class="btn btn-outline-danger w-80">
+                                        Panggil
+                                    </button>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -120,113 +129,51 @@
     </div>
 
 
-    {{-- MODAL BUTTON --}}
-    <div class="modal fade" id="hasilModal" tabindex="-1" aria-labelledby="hasilModalLabel" aria-hidden="true">
+    {{-- MODAL NO SURAT JALAN --}}
+    <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content border-success">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="hasilModalLabel">Pilih Aksi Hasil</h5>
-                    <button type="button" class="btn-close text-dark mb" data-bs-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="approveModalLabel">Masukan Nomor Surat Jalan</h5>
+                    <button type="button" class="btn-close text-dark mb-2" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body text-center d-flex justify-content-center">
-                    <form id="hasilForm" method="POST" action="{{ route('supply.admin.qc.updateStatus') }}">
+                    <form id="approveForm" method="POST" action="{{ route('supply.admin.ppic.input-nsj') }}">
                         @csrf
-                        <input type="hidden" name="barang_id" id="hasilModal-barang-id">
-                        <button type="submit" name="status" value="Ok" class="btn btn-success m-2">OK</button>
-                    </form>
-                    <div class="mt-2">
-                        <button type="button" class="btn btn-danger" onclick="confirmCatatanFromModal('Not Good')"
-                            data-bs-dismiss="modal">Not Good</button>
+                        <input type="hidden" name="barang_id" id="approveModal-barang-id">
+                        <input type="hidden" name="supply_id" id="approveModal-supply-id"> {{-- Tambahan --}}
 
-                        <button type="button" class="btn btn-warning mx-1" onclick="confirmCatatanFromModal('Hold')"
-                            data-bs-dismiss="modal">Hold</button>
-                    </div>
+                        <div class="input-group input-group-outline my-3 w-100">
+                            <label for="no_surat_jalan" class="form-label success">Nomor Surat Jalan</label>
+                            <input type="text" name="no_surat_jalan" id="no_surat_jalan" class="form-control w-100"
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    </form>                    
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- MODAL CATATAN / KETERANGAN --}}
-    <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('supply.admin.qc.updateStatus') }}">
-                @csrf
-                <input type="hidden" name="barang_id" id="konfirmasiModal-barang-id">
-                <input type="hidden" name="status" id="modal-status">
-
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambahkan Catatan?</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Apakah Anda ingin menambahkan catatan?</p>
-                        <div class="input-group input-group-dynamic mb-4 d-none" id="input-catatan-wrapper">
-                            <textarea class="form-control" name="catatan" id="catatan" placeholder="Ketik catatan disini"
-                                aria-label="Username" aria-describedby="basic-addon1" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="skipCatatan()">Tidak</button>
-                        <button type="button" class="btn btn-primary" onclick="showCatatanInput()">Ya</button>
-                        <button type="submit" class="btn btn-success d-none" id="submit-catatan-btn">Kirim</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- MODAL CATATAN / KETERANGAN --}}
-
-
-    {{-- MODAL BUTTON --}}
-
-    {{-- MODAL JS --}}
     <script>
-        let currentBarangId = null;
-
         function setBarangId(button) {
-            const barangId = button.getAttribute('data-barang-id');
-            document.getElementById('hasilModal-barang-id').value = barangId;
-            currentBarangId = barangId; // simpan untuk modal catatan
-        }
+    const barangId = button.getAttribute('data-barang-id');
+    const supplyId = button.getAttribute('data-supply-id');
 
+    document.getElementById('approveModal-barang-id').value = barangId;
+    document.getElementById('approveModal-supply-id').value = supplyId;
 
-        // logic modal catatan
-        let selectedId = null;
-        let selectedStatus = null;
+    // Kosongkan input nomor surat jalan agar selalu fresh
+    document.getElementById('nomor-surat-jalan').value = '';
 
-        function confirmCatatanFromModal(status) {
-            if (!currentBarangId) {
-                alert('ID tidak ditemukan.');
-                return;
-            }
+    currentBarangId = barangId;
+}
 
-            document.getElementById('konfirmasiModal-barang-id').value = currentBarangId;
-            document.getElementById('modal-status').value = status;
-            document.getElementById('input-catatan-wrapper').classList.add('d-none');
-            document.getElementById('submit-catatan-btn').classList.add('d-none');
-
-            const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
-            modal.show();
-        }
-
-        function showCatatanInput() {
-            document.getElementById('input-catatan-wrapper').classList.remove('d-none');
-            document.getElementById('submit-catatan-btn').classList.remove('d-none');
-        }
-
-        function skipCatatan() {
-            // langsung kirim form tanpa catatan
-            document.getElementById('catatan').value = '';
-            document.querySelector('#modalKonfirmasi form').submit();
-
-        }
     </script>
+    {{-- MODAL NO SURAT JALAN --}}
 
-    {{-- MODAL JS --}}
 
 
     <!-- DETAIL MODAL -->
