@@ -112,6 +112,24 @@
                         <span class="nav-link-text ms-1">PPIC</span>
                     </a>
                 </li>
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Arsip</h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('arsip/ng') }}">
+                        <i class="material-symbols-rounded opacity-5">gpp_bad</i>
+                        <span class="nav-link-text ms-1">Arsip Not Good (NG)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('arsip/hold') }}">
+                        <i class="material-symbols-rounded opacity-5">front_hand</i>
+                        <span class="nav-link-text ms-1">Arsip Hold</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Astra Komponen Indonesia</h6>
+                </li>
             </ul>
         </div>
     </aside>

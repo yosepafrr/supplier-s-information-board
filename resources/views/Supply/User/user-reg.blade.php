@@ -77,13 +77,13 @@
                         <input type="text" name="barang[0][jumlah_barang]" class="form-control form-control-lg">
                     </div>
                 </div>
-                <button type="button" class="btn btn-outline-success" id="tambah-barang">+ Tambah Barang</button>
+                <button type="button" class="btn btn-outline-success w-100 py-3" id="tambah-barang">+ Tambah Barang</button>
+                <button type="button" class="btn btn-outline-primary w-100 py-3 mb-3" data-bs-toggle="modal"
+                    data-bs-target="#modal-default">Submit</button>
                 {{-- FORM BARANG --}}
 
                 {{-- MAKE SURE MODAL --}}
                 <div class="col-md-4">
-                    <button type="button" class="btn btn-outline-primary w-100 mb-3" data-bs-toggle="modal"
-                        data-bs-target="#modal-default">Submit</button>
                     <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default"
                         aria-hidden="true">
                         <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
@@ -136,18 +136,18 @@
                     row.classList.add('barang-row', 'mb-2');
 
                     row.innerHTML = `
-                                                <div class="barang-form-grup">
-                                                    <h5 class="h5 mt-2">Barang ${index + 1}</h5>
-                                                    <div class="input-group input-group-lg input-group-outline mb-3">
-                                                        <label class="form-label">Nama Barang</label>
-                                                        <input type="text" name="barang[${index}][nama_barang]" class="form-control form-control-lg">
+                                                    <div class="barang-form-grup">
+                                                        <h5 class="h5 mt-2">Barang ${index + 1}</h5>
+                                                        <div class="input-group input-group-lg input-group-outline mb-3">
+                                                            <label class="form-label">Nama Barang</label>
+                                                            <input type="text" name="barang[${index}][nama_barang]" class="form-control form-control-lg">
+                                                        </div>
+                                                        <div class="input-group input-group-lg input-group-outline my-3">
+                                                            <label class="form-label">Jumlah Barang</label>
+                                                            <input type="text" name="barang[${index}][jumlah_barang]" class="form-control form-control-lg">
+                                                        </div>
                                                     </div>
-                                                    <div class="input-group input-group-lg input-group-outline my-3">
-                                                        <label class="form-label">Jumlah Barang</label>
-                                                        <input type="text" name="barang[${index}][jumlah_barang]" class="form-control form-control-lg">
-                                                    </div>
-                                                </div>
-                                            `;
+                                                `;
 
                     container.appendChild(row);
 

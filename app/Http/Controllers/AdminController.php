@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Barang;
 use App\Models\Supply;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class AdminController extends Controller
@@ -59,43 +60,58 @@ class AdminController extends Controller
     {
         $barang = Barang::findOrFail($request->barang_id);
         $status = $request->status;
-        $barang->status = $request->status;
+        $barang->status = $status;
         $barang->keterangan = $request->catatan;
 
-        // Logika otomatis mengisi progress_status berdasarkan status
+        // Update progress_status
         if ($status === 'Ok') {
             $barang->progress_status = 'On Progress PPIC';
         } elseif ($status === 'Not Good') {
             $barang->progress_status = 'Status Barang: Not Good';
+
+            // Simpan ke arsip_ng
+            $supply = Supply::findOrFail($barang->supply_id);
+            DB::table('arsip_ng')->insert([
+                'barang_id' => $barang->id,
+                'supply_id' => $supply->id,
+                'tanggal_masuk' => $supply->tanggal,
+                'jam_masuk' => $supply->jam,
+                'nama_barang' => $barang->nama_barang,
+                'jumlah_barang' => $barang->jumlah_barang,
+                'nama_perusahaan' => $supply->nama_perusahaan,
+                'nama_driver' => $supply->nama_driver,
+                'nopol' => $supply->nopol,
+                'keterangan' => $request->catatan,
+                'tanggal_update_qc' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         } elseif ($status === 'Hold') {
             $barang->progress_status = 'Status Barang: Hold';
+
+            // Simpan ke arsip_hold
+            $supply = Supply::findOrFail($barang->supply_id);
+            DB::table('arsip_hold')->insert([
+                'barang_id' => $barang->id,
+                'supply_id' => $supply->id,
+                'tanggal_masuk' => $supply->tanggal,
+                'jam_masuk' => $supply->jam,
+                'nama_barang' => $barang->nama_barang,
+                'jumlah_barang' => $barang->jumlah_barang,
+                'nama_perusahaan' => $supply->nama_perusahaan,
+                'nama_driver' => $supply->nama_driver,
+                'nopol' => $supply->nopol,
+                'keterangan' => $request->catatan,
+                'tanggal_update_qc' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
         $barang->save();
 
-        logger('STATUS: [' . $status . ']');
-
         return redirect()->back()->with('success', 'Status barang berhasil diperbarui.');
     }
-
-    public function approve(Request $request)
-    {
-        // Update status barang
-        $barang = Barang::findOrFail($request->barang_id);
-        $barang->status_on_ppic = 'Approved';
-
-        // Tambahan logika: set kolom status = Approved juga
-        $barang->status = 'Approved oleh PPIC'; // "Approved oleh PPIC"
-
-        // Update progress_status juga biar konsisten
-        $barang->progress_status = 'Approved oleh PPIC'; // "Approved oleh PPIC"
-        $barang->save();
-
-
-
-        return redirect()->back()->with('success', 'Status barang berhasil disetujui.');
-    }
-
     public function inputSuratJalan(Request $request)
     {
         // Update Supply

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\ProsesController;
 
 Route::get('/', function () {
@@ -22,3 +23,8 @@ Route::get('/supply/admin/ppic', [AdminController::class, 'ppic'])->name('supply
 Route::post('/supply/admin/qc/update-status', [AdminController::class, 'updateStatusOnQc'])->name('supply.admin.qc.updateStatus');
 Route::post('/supply/admin/ppic/approve', [AdminController::class, 'approve'])->name('supply.admin.ppic.approve');
 Route::post('/supply/admin/ppic/input-nsj', [AdminController::class, 'inputSuratJalan'])->name('supply.admin.ppic.input-nsj');
+
+
+// Arsip routes
+Route::get('/arsip/ng', [ArsipController::class, 'arsipNg'])->name('arsip.ng');
+Route::get('/arsip/hold', [ArsipController::class, 'arsipHold'])->name('arsip.hold');
