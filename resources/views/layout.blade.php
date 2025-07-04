@@ -32,7 +32,7 @@
             <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
                 aria-hidden="true" id="iconSidenav"></i>
             <a class="" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
-                <img src="../../assets/img/profile.png" class="navbar-brand-img" alt="main_logo">
+                <img src="../../assets/img/logo-aski.png" class="navbar-brand-img" alt="main_logo">
                 <span class="ms-1 text-xs text-dark">PT Astra Komponen Indonesia</span>
             </a>
         </div>

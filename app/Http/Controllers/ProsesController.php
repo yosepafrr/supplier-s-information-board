@@ -13,18 +13,27 @@ class ProsesController extends Controller
 {
     public function cekUpdateTerakhir(Request $request)
     {
-        $tanggal = $request->tanggal ?? Carbon::today('Asia/Jakarta');
+        $tanggal = $request->tanggal ?? now()->toDateString();
 
-        $lastUpdate = Supply::whereDate('tanggal', $tanggal)
-            ->with('barangs')
-            ->latest('updated_at')
-            ->first();
+        // Ambil data terakhir yang diubah
+        $lastUpdated = DB::table('barang')
+            ->whereDate('updated_at', $tanggal)
+            ->orderByDesc('updated_at')
+            ->value('updated_at');
+
+        // Ambil semua progress_status lalu buat hash untuk deteksi perubahan isi
+        $statusList = DB::table('barang')
+            ->whereDate('updated_at', $tanggal)
+            ->pluck('progress_status')
+            ->implode(',');
+
+        $statusHash = md5($statusList);
 
         return response()->json([
-            'last_updated_at' => optional($lastUpdate)->updated_at?->toIso8601String(),
+            'last_updated_at' => $lastUpdated,
+            'status_hash' => $statusHash,
         ]);
     }
-
     function dashboard()
     {
         return view("supply.dashboard");

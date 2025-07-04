@@ -95,7 +95,7 @@
                                     <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                                         data-bs-target="#detailModal"
-                                        onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}')">
+                                        onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
                                         Detail Informasi
                                     </button>
                                     <form method="POST" action="{{ route('supply.admin.ppic.approve') }}">
@@ -192,6 +192,7 @@
                             class="mx-2"></span>
                     </p>
                     <p class=" mb-0 py-1"><strong>Jam Masuk:</strong><span id="detail-jam-masuk" class="mx-2"></span></p>
+                    <p class=" mb-0 py-1"><strong>Tanggal Masuk:</strong><span id="detail-tanggal-masuk" class="mx-2"></span></p>
                     <p class="mt-3 mb-0 py-1"><strong>Nama Supplier:</strong><span id="detail-supplier" class="mx-2"></span>
                     </p>
                     <p class=" mb-0 py-1"><strong>Nama Driver:</strong><span id="detail-driver" class="mx-2"></span></p>
@@ -211,9 +212,10 @@
     </div>
 
     <script>
-        function showDetail(id, namaBarang, jumlahBarang, supplier, driver, nopol, antrian, jam) {
+        function showDetail(id, namaBarang, jumlahBarang, supplier, driver, nopol, antrian, jam, tanggal) {
             document.getElementById('detail-nomor-antrian').innerText = antrian;
             document.getElementById('detail-jam-masuk').innerText = jam;
+            document.getElementById('detail-tanggal-masuk').innerText = tanggal;
             document.getElementById('detail-nama-barang').innerText = namaBarang;
             document.getElementById('detail-jumlah-barang').innerText = jumlahBarang;
             document.getElementById('detail-supplier').innerText = supplier;

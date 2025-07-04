@@ -44,7 +44,7 @@ class AdminController extends Controller
         $flatData = collect();
         foreach ($supplies as $supply) {
             foreach ($supply->barangs as $barang) {
-                if ($barang->status === 'Ok') {
+                if ($barang->status === 'Ok' || $barang->status === 'Approved oleh PPIC') {
                     $flatData->push([
                         'supply' => $supply,
                         'barang' => $barang,
@@ -58,9 +58,22 @@ class AdminController extends Controller
     public function updateStatusOnQc(Request $request)
     {
         $barang = Barang::findOrFail($request->barang_id);
+        $status = $request->status;
         $barang->status = $request->status;
         $barang->keterangan = $request->catatan;
+
+        // Logika otomatis mengisi progress_status berdasarkan status
+        if ($status === 'Ok') {
+            $barang->progress_status = 'On Progress PPIC';
+        } elseif ($status === 'Not Good') {
+            $barang->progress_status = 'Status Barang: Not Good';
+        } elseif ($status === 'Hold') {
+            $barang->progress_status = 'Status Barang: Hold';
+        }
+
         $barang->save();
+
+        logger('STATUS: [' . $status . ']');
 
         return redirect()->back()->with('success', 'Status barang berhasil diperbarui.');
     }
@@ -70,7 +83,15 @@ class AdminController extends Controller
         // Update status barang
         $barang = Barang::findOrFail($request->barang_id);
         $barang->status_on_ppic = 'Approved';
+
+        // Tambahan logika: set kolom status = Approved juga
+        $barang->status = 'Approved oleh PPIC'; // "Approved oleh PPIC"
+
+        // Update progress_status juga biar konsisten
+        $barang->progress_status = 'Approved oleh PPIC'; // "Approved oleh PPIC"
         $barang->save();
+
+
 
         return redirect()->back()->with('success', 'Status barang berhasil disetujui.');
     }

@@ -50,7 +50,11 @@
                                         <p class="card-text text-2xl">{{ $barang->nama_barang }} | {{ $barang->jumlah_barang }}</p>
                                     </div>
                                     <div class="card-footer bg-transparent border-success">
-                                        {{ $supply->no_antrian }}
+                                        @if ($barang->progress_status)
+                                            {{ $barang->progress_status }}
+                                        @else
+                                            <span>On Progress QC</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +72,7 @@
 
                                     </div>
                                     <div class="card-footer bg-transparent border-success">
-                                        {{ $supply->no_antrian }}
+                                        {{ $barang->progress_status }}
                                     </div>
                                 </div>
                             </div>
@@ -130,9 +134,11 @@
 
 
 
-        {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
+        {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU ATAU STATUS BERUBAH --}}
         <script>
             let lastKnownUpdate = null;
+            let lastKnownStatusHash = null;
+
             const tanggal = document.querySelector('input[name="tanggal"]').value;
 
             async function checkForUpdate() {
@@ -140,19 +146,23 @@
                     const res = await fetch(`/monitor/check-update?tanggal=${tanggal}`);
                     const data = await res.json();
 
-                    if (!lastKnownUpdate) {
+                    if (!lastKnownUpdate || !lastKnownStatusHash) {
                         lastKnownUpdate = data.last_updated_at;
-                    } else if (lastKnownUpdate !== data.last_updated_at) {
-                        location.reload(); // data baru terdeteksi, reload halaman
+                        lastKnownStatusHash = data.status_hash;
+                    } else {
+                        const updated = lastKnownUpdate !== data.last_updated_at;
+                        const statusChanged = lastKnownStatusHash !== data.status_hash;
+
+                        if (updated || statusChanged) {
+                            location.reload(); // reload jika data atau status berubah
+                        }
                     }
                 } catch (e) {
                     console.error("Gagal cek update:", e);
                 }
             }
 
-
-            // Cek setiap 5 detik
-            setInterval(checkForUpdate, 5000);
+            setInterval(checkForUpdate, 5000); // Cek setiap 5 detik
         </script>
         {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
 
