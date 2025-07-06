@@ -15,14 +15,14 @@ class AdminController extends Controller
     {
         $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
 
-        $supplies = Supply::with('barangs')
+        $supplies = Supply::with('barang')
             ->whereDate('tanggal', $tanggal)
             ->orderBy('no_antrian')
             ->get();
 
         $flatData = collect();
         foreach ($supplies as $supply) {
-            foreach ($supply->barangs as $barang) {
+            foreach ($supply->barang as $barang) {
                 $flatData->push([
                     'supply' => $supply,
                     'barang' => $barang,
@@ -37,14 +37,14 @@ class AdminController extends Controller
     {
         $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
 
-        $supplies = Supply::with('barangs')
+        $supplies = Supply::with('barang')
             ->whereDate('tanggal', $tanggal)
             ->orderBy('no_antrian')
             ->get();
 
         $flatData = collect();
         foreach ($supplies as $supply) {
-            foreach ($supply->barangs as $barang) {
+            foreach ($supply->barang as $barang) {
                 if ($barang->status === 'Ok' || $barang->status === 'Approved oleh PPIC') {
                     $flatData->push([
                         'supply' => $supply,
@@ -56,6 +56,23 @@ class AdminController extends Controller
 
         return view("supply.admin.ppic", compact('flatData', 'tanggal'));
     }
+
+    public function approve(Request $request)
+    {
+        // Validasi
+        $request->validate([
+            'barang_id' => 'required|exists:barang,id',
+        ]);
+
+        // Update status barang
+        $barang = Barang::findOrFail($request->barang_id);
+        $barang->status_on_ppic = 'Approved';
+        $barang->progress_status = 'Approved oleh PPIC';
+        $barang->save();
+
+        return redirect()->back()->with('success', 'Status barang berhasil disetujui.');
+    }
+
     public function updateStatusOnQc(Request $request)
     {
         $barang = Barang::findOrFail($request->barang_id);

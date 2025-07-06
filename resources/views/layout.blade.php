@@ -41,7 +41,7 @@
         <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="{{ asset('/') }}">
+                    <a class="nav-link py-3 text-dark" href="{{ asset('/') }}">
                         <i class="material-symbols-rounded opacity-5">home_app_logo</i>
                         <span class="nav-link-text ms-1">Dashboard</span>
                     </a>
@@ -127,10 +127,24 @@
                         <span class="nav-link-text ms-1">Arsip Hold</span>
                     </a>
                 </li>
-                <li class="nav-item mt-3">
-                    <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Astra Komponen Indonesia</h6>
+                <hr class="horizontal dark my-0 mt-5">
+                <hr class="horizontal dark my-0 mb-2">
+                <li class="nav-item">
+                    <a class="nav-link text-dark"
+                        href="https://www.instagram.com/aski_innovation?igsh=MTQ1cjB6ZmN6eHFwNw==">
+                        <img class="opacity-5 w-15 mt-0.5 px-2" src="../../assets/img/instagram.png" alt="ig">
+                        <span class="nav-link-text ms-1">Instagram ASKI</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark"
+                        href="https://www.linkedin.com/company/astrakomponenindonesia/?originalSubdomain=id">
+                        <img class="opacity-5 w-20 mt-0.5 px-1" src="../../assets/img/linkedin.png" alt="ig">
+                        <span class="nav-link-text ms-1">LinkedIn ASKI</span>
+                    </a>
                 </li>
             </ul>
+
         </div>
     </aside>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">

@@ -48,14 +48,14 @@ class ProsesController extends Controller
     {
         $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
 
-        $supplies = Supply::with('barangs')
+        $supplies = Supply::with('barang')
             ->whereDate('tanggal', $tanggal)
             ->orderBy('no_antrian')
             ->get();
 
         $flatenned = collect();
         foreach ($supplies as $supply) {
-            foreach ($supply->barangs as $barang) {
+            foreach ($supply->barang as $barang) {
                 $flatenned->push([
                     'supply' => $supply,
                     'barang' => $barang,
