@@ -191,11 +191,12 @@
                     const res = await fetch('/monitor/check-panggilan');
                     const data = await res.json();
 
-                    if (data && data.id !== lastShownId) {
+                    if (data && String(data.id) !== String(lastShownId)) {
                         showModal(data.pesan);
-                        lastShownId = data.id;
                         localStorage.setItem("lastShownPanggilanId", data.id);
+                        lastShownId = String(data.id);
                     }
+
                 } catch (err) {
                     console.error("Gagal mengambil data panggilan:", err);
                 }
@@ -205,13 +206,14 @@
                 const modal = new bootstrap.Modal(document.getElementById('monitorModal'));
                 document.getElementById('monitorModalMessage').innerText = pesan;
                 modal.show();
+                document.activeElement.blur(); // cegah aria-hidden warning
 
                 setTimeout(() => {
                     modal.hide();
                 }, 5000);
             }
 
-            setInterval(checkForNewPanggilan, 3000); // Cek setiap 5 detik
+            setInterval(checkForNewPanggilan, 2000);
         </script>
         {{-- FUNGSI PEMANGGILAN --}}
 
