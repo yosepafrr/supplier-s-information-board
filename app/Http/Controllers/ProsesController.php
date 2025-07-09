@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Barang;
 use App\Models\Supply;
+use App\Models\Panggilan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
 class ProsesController extends Controller
@@ -34,6 +36,17 @@ class ProsesController extends Controller
             'status_hash' => $statusHash,
         ]);
     }
+
+    public function cekPanggilanTerbaru(Request $request)
+    {
+        $panggilanTerbaru = DB::table('panggilan')->latest('created_at')->first();
+
+        return response()->json([
+            'id' => $panggilanTerbaru->id,
+            'pesan' => $panggilanTerbaru->pesan,
+            'updated_at' => $panggilanTerbaru->updated_at,
+        ]);
+    }
     function dashboard()
     {
         return view("supply.dashboard");
@@ -44,9 +57,38 @@ class ProsesController extends Controller
         return view("supply.user.user-test");
     }
 
+    public function panggil(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'barang_id' => 'required|exists:barang,id',
+            'dari' => 'required|in:QC,PPIC',
+            'pesan' => 'required|string',
+        ]);
+
+        // Simpan data pemanggilan ke tabel panggilan
+        $panggilan = Panggilan::create([
+            'barang_id' => $request->barang_id,
+            'dari' => $request->dari,
+            'pesan' => $request->pesan,
+            'sudah_ditampilkan' => false, // Default value
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Panggilan berhasil dibuat.',
+            'data' => $panggilan,
+        ]);
+    }
+
+
     function monitor_user(Request $request)
     {
         $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
+
+        // Ambil data panggilan terakhir
+        $lastPanggilan = DB::table('panggilan')->latest('id')->first();
+        $lastPanggilanId = $lastPanggilan ? $lastPanggilan->id : null;
 
         $supplies = Supply::with('barang')
             ->whereDate('tanggal', $tanggal)
@@ -66,7 +108,7 @@ class ProsesController extends Controller
         $batches = $flatenned->chunk(6);
 
 
-        return view("supply.user.user-monitor", ['batches' => $batches]);
+        return view("supply.user.user-monitor", ['batches' => $batches], compact('lastPanggilanId', 'tanggal'));
     }
 
     function registrasi()

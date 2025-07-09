@@ -83,8 +83,8 @@
                                         onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
                                         Detail Informasi
                                     </button>
-                                    <button style="margin-left: 5px;" type="button"
-                                        class="btn btn-outline-primary">Panggil</button>
+                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-primary"
+                                        onclick="panggilBarang({{ $barang->id }}, '{{ e($barang->nama_barang) }}')">Panggil</button>
                                     <button style="margin-left: 5px;" type="button" class="btn btn-outline-success px-4"
                                         data-bs-toggle="modal" data-bs-target="#hasilModal" data-barang-id="{{ $barang->id }}"
                                         onclick="setBarangId(this)">
@@ -102,7 +102,7 @@
                                 </td>
                                 <td class="py-3"
                                     style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
                                     <p class="font-weight-bold mb-0">
                                         @if ($barang->keterangan)
                                             {{ $barang->keterangan }}
@@ -279,5 +279,43 @@
     </script>
 
     {{-- DETAIL MODAL --}}
+
+
+    {{-- MODAL MAKE SURE PEMANGGILAN --}}
+    <script>
+        function panggilBarang(barangId, namaBarang) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            if (confirm(`Apakah Anda yakin ingin memanggil barang: ${namaBarang}?`)) {
+                fetch('{{ route('admin.qc.panggilan.panggil') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        barang_id: barangId,
+                        dari: 'QC', // Sesuaikan dengan bagian admin
+                        pesan: `Barang ${namaBarang} dipanggil dari QC`
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Panggilan berhasil dibuat!');
+                        } else {
+                            alert('Terjadi kesalahan saat memanggil.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat memanggil.');
+                    });
+            }
+        }
+    </script>
+    {{-- MODAL MAKE SURE PEMANGGILAN --}}
+
+
 
 @endsection

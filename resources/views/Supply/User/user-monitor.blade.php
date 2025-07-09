@@ -86,6 +86,17 @@
             @endforeach
         </div>
 
+        {{-- MODAL PEMANGGILAN --}}
+        <div class="modal fade" id="monitorModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-info">
+                    <div class="modal-body text-center">
+                        <h5 id="monitorModalMessage"></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- MODAL PEMANGGILAN --}}
 
         {{-- FUNGSI REFRESH OTOMATIS SETIAP 7 DETIK --}}
         <script>
@@ -169,6 +180,40 @@
             setInterval(checkForUpdate, 5000); // Cek setiap 5 detik
         </script>
         {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
+
+
+        {{-- FUNGSI PEMANGGILAN --}}
+        <script>
+            let lastShownId = localStorage.getItem("lastShownPanggilanId");
+
+            async function checkForNewPanggilan() {
+                try {
+                    const res = await fetch('/monitor/check-panggilan');
+                    const data = await res.json();
+
+                    if (data && data.id !== lastShownId) {
+                        showModal(data.pesan);
+                        lastShownId = data.id;
+                        localStorage.setItem("lastShownPanggilanId", data.id);
+                    }
+                } catch (err) {
+                    console.error("Gagal mengambil data panggilan:", err);
+                }
+            }
+
+            function showModal(pesan) {
+                const modal = new bootstrap.Modal(document.getElementById('monitorModal'));
+                document.getElementById('monitorModalMessage').innerText = pesan;
+                modal.show();
+
+                setTimeout(() => {
+                    modal.hide();
+                }, 5000);
+            }
+
+            setInterval(checkForNewPanggilan, 3000); // Cek setiap 5 detik
+        </script>
+        {{-- FUNGSI PEMANGGILAN --}}
 
 
 

@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\ProsesController;
+use App\Http\Controllers\PanggilanController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Supply routes
 Route::get('/dashboard', [ProsesController::class, 'dashboard'])->name('supply.dashboard');
 Route::get('/supply/user/reg', [ProsesController::class, 'registrasi'])->name('supply.user.user-reg');
 Route::get('/supply/user/monitor', [ProsesController::class, 'monitor_user'])->name('supply.user.user-monitor');
@@ -28,3 +30,8 @@ Route::post('/supply/admin/ppic/input-nsj', [AdminController::class, 'inputSurat
 // Arsip routes
 Route::get('/arsip/ng', [ArsipController::class, 'arsipNg'])->name('arsip.ng');
 Route::get('/arsip/hold', [ArsipController::class, 'arsipHold'])->name('arsip.hold');
+
+
+// Pemanggilan routes
+Route::post('supply/admin/qc/panggilan/panggil', [ProsesController::class, 'panggil'])->name('admin.qc.panggilan.panggil');
+Route::get('/monitor/check-panggilan', [ProsesController::class, 'cekPanggilanTerbaru']);
