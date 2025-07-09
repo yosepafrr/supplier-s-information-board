@@ -72,7 +72,11 @@
 
                                     </div>
                                     <div class="card-footer bg-transparent border-success">
-                                        {{ $barang->progress_status }}
+                                        @if ($barang->progress_status)
+                                            {{ $barang->progress_status }}
+                                        @else
+                                            <span>On Progress QC</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

@@ -24968,7 +24968,7 @@ hr.horizontal.gray-light {
   top: 0;
   bottom: 0;
   width: 100%;
-  max-width: 14rem !important;
+  max-width: 17rem !important;
   overflow-y: auto;
   padding: 0;
   box-shadow: none;
@@ -24977,7 +24977,7 @@ hr.horizontal.gray-light {
 .navbar-vertical.navbar-expand-xs .navbar-collapse {
   display: block;
   overflow: auto;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 100px);
 }
 
 .navbar-vertical.navbar-expand-xs>[class*=container] {

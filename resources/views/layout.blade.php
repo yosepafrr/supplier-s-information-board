@@ -32,7 +32,7 @@
             <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
                 aria-hidden="true" id="iconSidenav"></i>
             <a class="" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
-                <img src="../../assets/img/logo-aski.png" class="navbar-brand-img" alt="main_logo">
+                <img src="../../assets/img/logo-aski.png" class="navbar-brand-img w-10" alt="main_logo">
                 <span class="ms-1 text-xs text-dark">PT Astra Komponen Indonesia</span>
             </a>
         </div>
@@ -127,8 +127,22 @@
                         <span class="nav-link-text ms-1">Arsip Hold</span>
                     </a>
                 </li>
-                <hr class="horizontal dark my-0 mt-5">
+                <hr class="horizontal dark my-0 mt-9">
                 <hr class="horizontal dark my-0 mb-2">
+                <li class="nav-item">
+                    <a class="nav-link text-dark"
+                        href="https://aspaki.or.id/membership/pt-astra-komponen-indonesia">
+                        <img class="opacity-5 w-15 mt-0.5 px-2" src="../../assets/img/web.png" alt="web">
+                        <span class="nav-link-text ms-1">Website ASKI</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark"
+                        href="https://grin.co.id/">
+                        <img class="opacity-5 w-15 mt-0.5 px-1 rounded-full" src="../../assets/img/grin.png" alt="grin">
+                        <span class="nav-link-text ms-1">GRIN</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark"
                         href="https://www.instagram.com/aski_innovation?igsh=MTQ1cjB6ZmN6eHFwNw==">
@@ -139,7 +153,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark"
                         href="https://www.linkedin.com/company/astrakomponenindonesia/?originalSubdomain=id">
-                        <img class="opacity-5 w-20 mt-0.5 px-1" src="../../assets/img/linkedin.png" alt="ig">
+                        <img class="opacity-5 w-15 mt-0.5 px-1" src="../../assets/img/linkedin.png" alt="link">
                         <span class="nav-link-text ms-1">LinkedIn ASKI</span>
                     </a>
                 </li>
