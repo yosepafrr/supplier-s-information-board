@@ -190,6 +190,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
 }
 
 @media (prefers-reduced-motion: no-preference) {

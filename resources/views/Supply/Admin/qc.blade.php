@@ -2,6 +2,8 @@
 
 @section('konten')
     <div class="mt-2 mx-5">
+        <div id="alert-container" class="top-0 w-100"></div>
+
         <div class="d-flex align-items-center justify-content-between w-full">
             <div>
                 <h1 class="h4 font-weight-bold mb-0">Admin Quality Control</h1>
@@ -83,13 +85,13 @@
                                         onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
                                         Detail Informasi
                                     </button>
-                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-primary"
-                                        onclick="panggilBarang({{ $barang->id }}, '{{ e($barang->nama_barang) }}')">Panggil</button>
                                     <button style="margin-left: 5px;" type="button" class="btn btn-outline-success px-4"
                                         data-bs-toggle="modal" data-bs-target="#hasilModal" data-barang-id="{{ $barang->id }}"
                                         onclick="setBarangId(this)">
                                         Hasil
                                     </button>
+                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-primary"
+                                        onclick="panggilBarang({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->no_antrian) }}')">Panggil</button>
                                 </td>
                                 <td class="py-3 px-4">
                                     <p class="font-weight-bold mb-0">
@@ -102,7 +104,7 @@
                                 </td>
                                 <td class="py-3"
                                     style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
                                     <p class="font-weight-bold mb-0">
                                         @if ($barang->keterangan)
                                             {{ $barang->keterangan }}
@@ -120,7 +122,7 @@
     </div>
 
 
-    {{-- MODAL BUTTON --}}
+    {{-- MODAL HASIL --}}
     <div class="modal fade" id="hasilModal" tabindex="-1" aria-labelledby="hasilModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content border-success">
@@ -148,7 +150,7 @@
         </div>
     </div>
 
-    {{-- MODAL CATATAN / KETERANGAN --}}
+    {{-- MODAL JIKA HASIL NG ATAU HOLD APAKAH INGIN MENAMBAHKAN CATATAN? --}}
     <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" action="{{ route('supply.admin.qc.updateStatus') }}">
@@ -177,13 +179,11 @@
             </form>
         </div>
     </div>
+    {{-- MODAL JIKA HASIL NG ATAU HOLD APAKAH INGIN MENAMBAHKAN CATATAN? --}}
+    {{-- MODAL HASIL --}}
 
-    {{-- MODAL CATATAN / KETERANGAN --}}
 
-
-    {{-- MODAL BUTTON --}}
-
-    {{-- MODAL JS --}}
+    {{-- MODAL FIELD CATATAN JIKA INGIN MENAMBAHKAN CATATAN --}}
     <script>
         let currentBarangId = null;
 
@@ -225,11 +225,10 @@
 
         }
     </script>
+    {{-- MODAL FIELD CATATAN JIKA INGIN MENAMBAHKAN CATATAN --}}
 
-    {{-- MODAL JS --}}
 
-
-    <!-- DETAIL MODAL -->
+    <!-- MODAL DETAIL INFORMASI -->
     <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -277,44 +276,113 @@
             document.getElementById('detail-nopol').innerText = nopol;
         }
     </script>
+    {{-- MODAL DETAIL INFORMASI --}}
 
-    {{-- DETAIL MODAL --}}
+
+    <!-- MODAL KONFIRMASI PANGGILAN -->
+    <div class="modal fade" id="modalKonfirmasiPanggilan" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white">Konfirmasi Panggilan</h5>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-start">
+                    <p id="pesanKonfirmasiPanggilan">Apakah Anda yakin ingin memanggil barang ini?</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btnKonfirmasiPanggil">Panggil</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     {{-- MODAL MAKE SURE PEMANGGILAN --}}
     <script>
-        function panggilBarang(barangId, namaBarang) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let barangIdTerpilih = null;
+        let namaBarangTerpilih = null;
 
-            if (confirm(`Apakah Anda yakin ingin memanggil barang: ${namaBarang}?`)) {
-                fetch('{{ route('admin.qc.panggilan.panggil') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        barang_id: barangId,
-                        dari: 'QC', // Sesuaikan dengan bagian admin
-                        pesan: `Barang ${namaBarang} dipanggil dari QC`
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Panggilan berhasil dibuat!');
-                        } else {
-                            alert('Terjadi kesalahan saat memanggil.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat memanggil.');
-                    });
-            }
+        function panggilBarang(barangId, namaBarang, supplier, driver, noAntrian) {
+            barangIdTerpilih = barangId;
+            namaBarangTerpilih = namaBarang;
+            namaSupplier = supplier;
+            namaDriver = driver;
+            nomorAntrian = noAntrian;
+
+            // Set pesan di modal
+            document.getElementById('pesanKonfirmasiPanggilan').innerText =
+                `Apakah Anda yakin ingin memanggil: 
+                                Driver ${driver} 
+                                Dengan barang ${namaBarang} 
+                                Dari ${supplier}?`;
+
+            // Tampilkan modal
+            const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasiPanggilan'));
+            modal.show();
         }
+
+        document.getElementById('btnKonfirmasiPanggil').addEventListener('click', () => {
+            fetch('{{ route('admin.qc.panggilan.panggil') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    barang_id: barangIdTerpilih,
+                    dari: 'QC',
+                    pesan: `No Antrian ${nomorAntrian} 
+                            ${namaBarangTerpilih} dari ${namaSupplier} oleh ${namaDriver}
+                            Silahkan menuju counter QC` // Pesan panggilan
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalKonfirmasiPanggilan'));
+                    modal.hide();
+
+                    if (data.success) {
+                        showBootstrapAlert('success', 'Panggilan berhasil dibuat!');
+                    } else {
+                        showBootstrapAlert('danger', 'Terjadi kesalahan saat memanggil.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showBootstrapAlert('danger', 'Terjadi kesalahan saat memanggil.');
+                });
+        });
     </script>
     {{-- MODAL MAKE SURE PEMANGGILAN --}}
+
+    {{-- ALERT STATUS PEMANGGILAN --}}
+    <script>
+        function showBootstrapAlert(type, message, timeout = 5000) {
+            const alertId = `alert-${Date.now()}`;
+
+            const alertHTML = `
+                                    <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show text-white" role="alert">
+                                        <strong>${message}</strong>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    `;
+
+            const container = document.getElementById('alert-container');
+            container.insertAdjacentHTML('beforeend', alertHTML);
+
+            setTimeout(() => {
+                const alertBox = document.getElementById(alertId);
+                if (alertBox) {
+                    alertBox.classList.remove('show');
+                    alertBox.classList.add('fade');
+                    setTimeout(() => alertBox.remove(), 300); // Remove after fade out
+                }
+            }, timeout);
+        }
+    </script>
+    {{-- ALERT STATUS PEMANGGILAN --}}
 
 
 

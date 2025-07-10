@@ -34,4 +34,5 @@ Route::get('/arsip/hold', [ArsipController::class, 'arsipHold'])->name('arsip.ho
 
 // Pemanggilan routes
 Route::post('supply/admin/qc/panggilan/panggil', [ProsesController::class, 'panggil'])->name('admin.qc.panggilan.panggil');
+Route::post('supply/admin/ppic/panggilan/panggil', [ProsesController::class, 'panggil'])->name('admin.ppic.panggilan.panggil');
 Route::get('/monitor/check-panggilan', [ProsesController::class, 'cekPanggilanTerbaru']);

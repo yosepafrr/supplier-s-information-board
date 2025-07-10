@@ -87,11 +87,17 @@
         </div>
 
         {{-- MODAL PEMANGGILAN --}}
-        <div class="modal fade" id="monitorModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content bg-info">
-                    <div class="modal-body text-center">
+        <div class="modal fade" id="monitorModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered w-100 h-100" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title font-weight-light text-white">Mohon Perhatian</h5>
+                    </div>
+                    <div class="modal-body">
                         <h5 id="monitorModalMessage"></h5>
+                    </div>
+                    <div class="modal-footer">
+                        <h5 class="modal-title font-weight-light">Terimakasih Atas Perhatiannya.</h5>
                     </div>
                 </div>
             </div>
@@ -177,7 +183,7 @@
                 }
             }
 
-            setInterval(checkForUpdate, 5000); // Cek setiap 5 detik
+            setInterval(checkForUpdate, 2000); // Cek setiap 2 detik
         </script>
         {{-- FUNGSI REFRESH OTOMATIS KETIKA ADA DATA BARU --}}
 
@@ -210,7 +216,7 @@
 
                 setTimeout(() => {
                     modal.hide();
-                }, 5000);
+                }, 7000);
             }
 
             setInterval(checkForNewPanggilan, 2000);
