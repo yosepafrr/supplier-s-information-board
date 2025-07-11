@@ -79,6 +79,7 @@ class AdminController extends Controller
         $status = $request->status;
         $barang->status = $status;
         $barang->keterangan = $request->catatan;
+        $barang->status_qc_updated_at = now();
 
         // Update progress_status
         if ($status === 'Ok') {
@@ -137,5 +138,34 @@ class AdminController extends Controller
         $supply->save();
 
         return redirect()->back()->with('success', 'Nomor surat jalan berhasil disimpan.');
+    }
+
+
+    // Notification methods
+    public function checkUpdateQc()
+    {
+        $latest = DB::table('barang')
+            ->whereDate('created_at', Carbon::today())
+            ->latest('created_at')
+            ->first();
+
+        return response()->json([
+            'has_new' => $latest ? $latest->created_at > session('last_qc_data', '2000-01-01') : false,
+            'last_time' => $latest?->created_at,
+        ]);
+    }
+
+    public function checkUpdatePpic()
+    {
+        $latest = DB::table('barang')
+            ->where('status', 'Ok')
+            ->whereDate('status_qc_updated_at', Carbon::today())
+            ->latest('status_qc_updated_at')
+            ->first();
+
+        return response()->json([
+            'has_new' => $latest ? $latest->status_qc_updated_at > session('last_ppic_data', '2000-01-01') : false,
+            'last_time' => $latest?->status_qc_updated_at,
+        ]);
     }
 }

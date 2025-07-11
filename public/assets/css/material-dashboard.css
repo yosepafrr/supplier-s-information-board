@@ -24777,6 +24777,8 @@ hr.horizontal.gray-light {
   width: 18px;
 }
 
+
+
 .navbar .sidenav-toggler-inner .sidenav-toggler-line {
   transition: all 0.15s ease;
   background: #737373;
@@ -29205,6 +29207,45 @@ body.g-sidenav-hidden #sidenav-main {
 
 .ml-10rem{
   margin-left: 10rem !important;
+}
+
+.ml-5rem{
+  margin-left: 5rem !important;
+}
+
+
+/* Notifikasi masuk dari kanan */
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Notifikasi keluar ke kanan */
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+#notifAlert {
+    transition: transform 0.3s, opacity 0.3s;
+}
+#notifAlert.slide-in {
+    animation: slideInRight 0.4s forwards;
+}
+#notifAlert.slide-out {
+    animation: slideOutRight 0.4s forwards;
 }
 
 

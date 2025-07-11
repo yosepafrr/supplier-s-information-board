@@ -4,6 +4,18 @@
     <div class="mt-2 mx-5">
         <div id="alert-container" class="top-0 w-100"></div>
 
+        {{-- ALERT NOTIFIKASI --}}
+        <div id="notifAlert" class="alert-success alert-dismissible fade position-fixed top-0 end-0 m-3 d-none" role="alert"
+            style="z-index: 9999; min-width: 400px; max-height: 200px;">
+            <span id="notifAlertMessage" class="text-white mt-1">Pesan notifikasi</span>
+            <button class="btn btn-outline-white ml-5rem my-0" type="button" onClick="window.location.reload();">Refresh
+                Sekarang</button>
+            <button type="button" class="btn-close" onclick="hideNotif()" aria-label="Close">x</button>
+        </div>
+        {{-- ALERT NOTIFICATION --}}
+
+
+
         <div class="d-flex align-items-center justify-content-between w-full">
             <div>
                 <h1 class="h4 font-weight-bold mb-0">Admin Quality Control</h1>
@@ -104,7 +116,7 @@
                                 </td>
                                 <td class="py-3"
                                     style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ">
                                     <p class="font-weight-bold mb-0">
                                         @if ($barang->keterangan)
                                             {{ $barang->keterangan }}
@@ -314,9 +326,9 @@
             // Set pesan di modal
             document.getElementById('pesanKonfirmasiPanggilan').innerText =
                 `Apakah Anda yakin ingin memanggil: 
-                                Driver ${driver} 
-                                Dengan barang ${namaBarang} 
-                                Dari ${supplier}?`;
+                                                                                                                    Driver ${driver} 
+                                                                                                                    Dengan barang ${namaBarang} 
+                                                                                                                    Dari ${supplier}?`;
 
             // Tampilkan modal
             const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasiPanggilan'));
@@ -334,8 +346,8 @@
                     barang_id: barangIdTerpilih,
                     dari: 'QC',
                     pesan: `No Antrian ${nomorAntrian} 
-                            ${namaBarangTerpilih} dari ${namaSupplier} oleh ${namaDriver}
-                            Silahkan menuju counter QC` // Pesan panggilan
+                                                                                                                ${namaBarangTerpilih} dari ${namaSupplier} oleh ${namaDriver}
+                                                                                                                Silahkan menuju counter QC` // Pesan panggilan
                 })
             })
                 .then(response => response.json())
@@ -363,11 +375,11 @@
             const alertId = `alert-${Date.now()}`;
 
             const alertHTML = `
-                                    <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show text-white" role="alert">
-                                        <strong>${message}</strong>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                    `;
+                            <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show text-white" role="alert">
+                                <strong>${message}</strong>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            `;
 
             const container = document.getElementById('alert-container');
             container.insertAdjacentHTML('beforeend', alertHTML);
@@ -383,6 +395,79 @@
         }
     </script>
     {{-- ALERT STATUS PEMANGGILAN --}}
+
+
+    {{-- SCRIPT NOTIFICATION --}}
+    <audio id="notifSound" src="{{ asset('assets/sound/bell.mp3') }}" preload="auto"></audio>
+    <script>
+        function showNotif(pesan, type = 'success') {
+            const notif = document.getElementById('notifAlert');
+            const message = document.getElementById('notifAlertMessage');
+            const sound = document.getElementById('notifSound');
+
+            // Set pesan dan tipe alert (success, danger, info, etc)
+            message.textContent = pesan;
+            notif.className = `alert alert-${type} alert-dismissible fade position-fixed top-0 end-0 m-3`; // reset classes
+            notif.style.zIndex = 9999;
+
+            notif.classList.remove('slide-out');
+            notif.classList.add('d-none');
+
+            setTimeout(() => {
+                notif.classList.remove('d-none');
+                notif.classList.add('slide-in');
+            }, 10);
+
+            // ⏯️ Mainkan suara
+            if (sound) {
+                sound.currentTime = 0; // mulai dari awal
+                sound.play().catch((e) => {
+                    console.warn('Gagal memutar suara:', e);
+                });
+            }
+            // Auto hide setelah 15 detik
+            setTimeout(() => {
+                hideNotif();
+            }, 15000);
+        }
+
+        function hideNotif() {
+            const notif = document.getElementById('notifAlert');
+
+            // Animasi fade-out
+            notif.classList.remove('slide-in');
+            notif.classList.add('slide-out');
+
+            // Setelah transisi selesai, sembunyikan elemen
+            setTimeout(() => {
+                notif.classList.add('d-none');
+            }, 300); // Bootstrap fade duration
+        }
+    </script>
+
+
+    <script>
+        let lastQcTime = localStorage.getItem("last_qc_check_time") || null;
+
+        async function checkNewForQc() {
+            try {
+                const res = await fetch('/admin/qc/check-update');
+                const data = await res.json();
+
+                if (data.has_new && data.last_time !== lastQcTime) {
+                    localStorage.setItem("last_qc_check_time", data.last_time);
+                    lastQcTime = data.last_time;
+                    showNotif('Ada data baru untuk Quality Control!', 'success');
+                }
+            } catch (e) {
+                console.error("Gagal cek data baru:", e);
+            }
+        }
+
+        setInterval(checkNewForQc, 2000);
+    </script>
+
+    {{-- SCRIPT NOTIFICATION --}}
 
 
 

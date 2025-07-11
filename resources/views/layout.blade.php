@@ -24,7 +24,12 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
-    
+
+
+
+    {{-- AUDIO --}}
+    {{-- <audio id="notifSound" src="../../assets/audio/bell.mp3" preload="auto"></audio> --}}
+    {{-- AUDIO --}}
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -132,15 +137,13 @@
                 <hr class="horizontal dark my-0 mt-9">
                 <hr class="horizontal dark my-0 mb-2">
                 <li class="nav-item">
-                    <a class="nav-link text-dark"
-                        href="https://aspaki.or.id/membership/pt-astra-komponen-indonesia">
+                    <a class="nav-link text-dark" href="https://aspaki.or.id/membership/pt-astra-komponen-indonesia">
                         <img class="opacity-5 w-15 mt-0.5 px-2" src="../../assets/img/web.png" alt="web">
                         <span class="nav-link-text ms-1">Website ASKI</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark"
-                        href="https://grin.co.id/">
+                    <a class="nav-link text-dark" href="https://grin.co.id/">
                         <img class="opacity-5 w-15 mt-0.5 px-1 rounded-full" src="../../assets/img/grin.png" alt="grin">
                         <span class="nav-link-text ms-1">GRIN</span>
                     </a>

@@ -4,6 +4,17 @@
     <div class="mt-2 mx-5">
     <div id="alert-container" class="top-0 w-100"></div>
 
+            {{-- ALERT NOTIFIKASI --}}
+        <div id="notifAlert" class="alert-success alert-dismissible fade position-fixed top-0 end-0 m-3 d-none" role="alert"
+            style="z-index: 9999; min-width: 400px; max-height: 200px;">
+            <span id="notifAlertMessage" class="text-white mt-1">Pesan notifikasi</span>
+            <button class="btn btn-outline-white ml-5rem my-0" type="button" onClick="window.location.reload();">Refresh
+                Sekarang</button>
+            <button type="button" class="btn-close" onclick="hideNotif()" aria-label="Close">x</button>
+        </div>
+        {{-- ALERT NOTIFICATION --}}
+
+
         <div class="d-flex align-items-center justify-content-between w-full">
             <div>
                 <h1 class="h4 font-weight-bold mb-0">Admin PPIC (Production Planning and Inventory Control)</h1>
@@ -100,7 +111,7 @@
                                         onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
                                         Detail Informasi
                                     </button>
-                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#confirmApproveModal">Approve</button>
+                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#confirmApproveModal" onclick="bukaModalApprove({{ $barang->id }})">Approve</button>
                                 </div>
                                 </td>
                                 <td class="py-3 px-4">
@@ -117,7 +128,6 @@
                                         Panggil
                                     </button>
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
@@ -221,8 +231,38 @@
             document.getElementById('detail-nopol').innerText = nopol;
         }
     </script>
-
     {{-- DETAIL MODAL --}}
+
+            {{-- MODAL KONFIRMASI APPROVE (GLOBAL) --}}
+            <script>
+                function bukaModalApprove(barangId) {
+                    document.getElementById('approve-barang-id').value = barangId;
+                }
+            </script>
+
+
+            <div class="modal fade" id="confirmApproveModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h5 class="modal-title font-weight-normal text-white">Approve barang?</h5>
+                            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="POST" action="{{ route('supply.admin.ppic.approve') }}">
+                            @csrf
+                            <input type="hidden" name="barang_id" id="approve-barang-id">
+                            <div class="modal-body">
+                                Approve barang ini?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{-- MODAL KONFIRMASI APPROVE (GLOBAL) --}}
 
         <!-- MODAL KONFIRMASI PANGGILAN -->
         <div class="modal fade" id="modalKonfirmasiPanggilan" tabindex="-1" aria-hidden="true">
@@ -245,31 +285,6 @@
     
 
 
-        {{-- MODAL KONFIRMASI APPROVE --}}
-            <div class="modal fade" id="confirmApproveModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                <div class="modal-header bg-success">
-                    <h5 class="modal-title font-weight-normal text-white" id="exampleModalLabel">Approve barang?</h5>
-                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Approve barang ini?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                    <form method="POST" action="{{ route('supply.admin.ppic.approve') }}">
-                        @csrf
-                        <input type="hidden" name="barang_id" value="{{ $barang->id }}">
-                        <button type="submit" class="btn btn-success mt-1">Approve</button>
-                    </form>
-
-                </div>
-                </div>
-            </div>
-            </div>
-        {{-- MODAL KONFIRMASI APPROVE --}}
     
         {{-- FUNGSI MAKE SURE PEMANGGILAN --}}
         <script>
@@ -355,6 +370,79 @@
             }
         </script>
         {{-- ALERT STATUS PEMANGGILAN --}}
+
+            {{-- SCRIPT NOTIFICATION --}}
+    <audio id="notifSound" src="{{ asset('assets/sound/bell.mp3') }}" preload="auto"></audio>
+    <script>
+        function showNotif(pesan, type = 'success') {
+            const notif = document.getElementById('notifAlert');
+            const message = document.getElementById('notifAlertMessage');
+            const sound = document.getElementById('notifSound');
+
+            // Set pesan dan tipe alert (success, danger, info, etc)
+            message.textContent = pesan;
+            notif.className = `alert alert-${type} alert-dismissible fade position-fixed top-0 end-0 m-3`; // reset classes
+            notif.style.zIndex = 9999;
+
+            notif.classList.remove('slide-out');
+            notif.classList.add('d-none');
+
+            setTimeout(() => {
+                notif.classList.remove('d-none');
+                notif.classList.add('slide-in');
+            }, 10);
+
+            // ⏯️ Mainkan suara
+            if (sound) {
+                sound.currentTime = 0; // mulai dari awal
+                sound.play().catch((e) => {
+                    console.warn('Gagal memutar suara:', e);
+                });
+            }
+            // Auto hide setelah 15 detik
+            setTimeout(() => {
+                hideNotif();
+            }, 15000);
+        }
+
+        function hideNotif() {
+            const notif = document.getElementById('notifAlert');
+
+            // Animasi fade-out
+            notif.classList.remove('slide-in');
+            notif.classList.add('slide-out');
+
+            // Setelah transisi selesai, sembunyikan elemen
+            setTimeout(() => {
+                notif.classList.add('d-none');
+            }, 300); // Bootstrap fade duration
+        }
+    </script>
+
+
+    <script>
+        let lastPpicTime = localStorage.getItem("last_ppic_check_time") || null;
+
+        async function checkNewForPpic() {
+            try {
+                const res = await fetch('/admin/ppic/check-update');
+                const data = await res.json();
+
+                if (data.has_new && data.last_time !== lastPpicTime) {
+                    localStorage.setItem("last_ppic_check_time", data.last_time);
+                    lastPpicTime = data.last_time;
+                    showNotif('Ada data baru untuk PPIC!', 'success');
+                }
+            } catch (e) {
+                console.error("Gagal cek data baru:", e);
+            }
+        }
+
+        setInterval(checkNewForPpic, 2000);
+    </script>
+
+    {{-- SCRIPT NOTIFICATION --}}
+
     
 
 @endsection
