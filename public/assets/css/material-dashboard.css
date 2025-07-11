@@ -29248,6 +29248,11 @@ body.g-sidenav-hidden #sidenav-main {
     animation: slideOutRight 0.4s forwards;
 }
 
+#togglePasswordBtn:hover {
+  cursor: pointer;
+  background-color: grey;
+}
+
 
 
 /* MODIFIKASI */

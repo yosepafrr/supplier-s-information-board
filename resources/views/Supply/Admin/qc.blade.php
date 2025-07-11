@@ -8,9 +8,9 @@
         <div id="notifAlert" class="alert-success alert-dismissible fade position-fixed top-0 end-0 m-3 d-none" role="alert"
             style="z-index: 9999; min-width: 400px; max-height: 200px;">
             <span id="notifAlertMessage" class="text-white mt-1">Pesan notifikasi</span>
-            <button class="btn btn-outline-white ml-5rem my-0" type="button" onClick="window.location.reload();">Refresh
+            <button class="btn btn-outline-white ml-5rem my-2" type="button" onClick="window.location.reload();">Refresh
                 Sekarang</button>
-            <button type="button" class="btn-close" onclick="hideNotif()" aria-label="Close">x</button>
+            <button type="button" class="btn-close mt-2" onclick="hideNotif()" aria-label="Close">x</button>
         </div>
         {{-- ALERT NOTIFICATION --}}
 

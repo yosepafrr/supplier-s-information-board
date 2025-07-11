@@ -24,12 +24,6 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
-
-
-
-    {{-- AUDIO --}}
-    {{-- <audio id="notifSound" src="../../assets/audio/bell.mp3" preload="auto"></audio> --}}
-    {{-- AUDIO --}}
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -189,19 +183,26 @@
                         <li class="breadcrumb-item text-sm"><a class="opacity-7 text-dark"
                                 href="{{ asset('/supply/user/monitor') }}">Monitor User</a>
                         </li>
-                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">User</li>
+                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+                            <strong>{{ Auth::check() && Auth::user()->name ? Auth::user()->name : 'Visitor' }}</strong>
+                        </li>
                     </ol>
                     <a href="{{ asset('/') }}">
                         <h6 class="font-weight-bolder text-sm mb-0">PT Astra Komponen Indonesia</h6>
                     </a>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                    <div class="ms-md-auto pe-md-3 d-flex gap-3 align-items-center">
+                    <div class="ms-md-auto pe-md-3 d-flex gap-3 align-items-center" style="margin-right: 20px;">
                         <div class="input-group input-group-outline">
                             <div class="input-group input-group-outline mb-2 px-0">
                                 <input type="text" name="jam" class="form-control" id="jamInput" readonly>
                             </div>
                         </div>
+                        {{-- LOGOUT BUTTON --}}
+                        <button type="button" class="btn btn-danger mt-2 py-2 text-center" style="padding-right: 35px; padding-left: 20px;" data-bs-toggle="modal"
+                            data-bs-target="#modalLogout">Logout</button>
+                        {{-- LOGOUT BUTTON --}}
+
                         {{-- <div class="input-group input-group-outline">
                             <div class="input-group input-group-outline pt-2" onclick="location.reload();">
                                 <button type="button" class="btn btn-outline-primary">Refresh</button>
@@ -355,6 +356,34 @@
         Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
 </script>
+
+{{-- MAKE SURE MODAL LOGOUT--}}
+<div class="col-md-4">
+    <div class="modal fade" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="modalLogout"
+        aria-hidden="true">
+        <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h6 class="modal-title font-weight-normal text-white" id="modal-title-default">Apakah anda yakin ingin keluar?</h6>
+                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-danger mt-3 py-2">
+                            Logout
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-link mt-3  ml-auto text-danger" data-bs-dismiss="modal">Kembali</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- MAKE SURE MODAL LOGOUT--}}
+
 
 
 </html>

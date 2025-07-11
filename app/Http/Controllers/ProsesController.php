@@ -51,12 +51,6 @@ class ProsesController extends Controller
     {
         return view("supply.dashboard");
     }
-
-    function test()
-    {
-        return view("supply.user.user-test");
-    }
-
     public function panggil(Request $request)
     {
         // Validasi input
