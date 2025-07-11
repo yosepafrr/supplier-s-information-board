@@ -189,8 +189,11 @@
 
 
         {{-- FUNGSI PEMANGGILAN --}}
+        <audio id="notifSound" src="{{ asset('assets/sound/pengumuman2.mp3') }}" preload="auto"></audio>
         <script>
             let lastShownId = localStorage.getItem("lastShownPanggilanId");
+            const sound = document.getElementById('notifSound');
+            sound.volume = 0.5;
 
             async function checkForNewPanggilan() {
                 try {
@@ -213,6 +216,15 @@
                 document.getElementById('monitorModalMessage').innerText = pesan;
                 modal.show();
                 document.activeElement.blur(); // cegah aria-hidden warning
+
+                // ⏯️ Mainkan suara
+                if (sound) {
+                    sound.currentTime = 0; // mulai dari awal
+                    sound.play().catch((e) => {
+                        console.warn('Gagal memutar suara:', e);
+                    });
+                }
+
 
                 setTimeout(() => {
                     modal.hide();
