@@ -46,6 +46,12 @@ Route::middleware(['auth', 'role:admin_ppic,admin_qc,super_admin,user'])->group(
     Route::get('/supply/user/monitor', [ProsesController::class, 'monitor_user'])->name('supply.user.user-monitor');
 });
 
+// 🟠 Super Admin
+Route::middleware(['auth', 'role:super_admin'])->group(function () {
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+});
+
 // MIDDLEWARE END
 
 

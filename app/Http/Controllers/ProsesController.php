@@ -119,11 +119,10 @@ class ProsesController extends Controller
             // MEMBUAT NOMOR ANTRIAN YANG RESET DI JAM TERTENTU
             // Jam reset: setiap hari jam 23:59
             $now = Carbon::now('Asia/Jakarta');
-            $resetTime = Carbon::today('Asia/Jakarta')->setTIme(23, 59);
+            $resetTime = Carbon::today('Asia/Jakarta')->setTime(23, 59);
 
-            // Jika sekarang masih sebelum jam 16:00, maka resetTime adalah kemarin jam 16:00
             if ($now->lessThan($resetTime)) {
-                $resetTime = $resetTime->subDay(); // resetTime jadi kemarin 16:00
+                $resetTime = $resetTime->subDay(); // resetTime jadi kemarin 23:59
             }
 
             // Cari antrian terakhir setelah waktu reset

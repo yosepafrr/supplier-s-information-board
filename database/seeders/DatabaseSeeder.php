@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Supplier',
             'email' => 'supplier@aski.user.com',
             'password' => Hash::make('supplierpassword123'),
-            'role' => 'user',
+            'role' => 'supplier',
         ]);
     }
 }

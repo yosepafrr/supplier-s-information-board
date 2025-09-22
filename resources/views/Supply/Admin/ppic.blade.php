@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="card mb-4 max-height-vh-70">
+        <div class="card mb-4 max-height-vh-70 overflow-y-auto" id="tableContainer">
             <div class="table-responsive">
                 <table class="table align-items-center mb-0">
                     <thead>
@@ -187,7 +187,7 @@
     <!-- DETAIL MODAL -->
     <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Detail Informasi</h5>
@@ -431,13 +431,15 @@
                 if (data.has_new && data.last_time !== lastPpicTime) {
                     localStorage.setItem("last_ppic_check_time", data.last_time);
                     lastPpicTime = data.last_time;
-                    showNotif('Ada data baru untuk PPIC!', 'success');
+                    // showNotif('Ada data baru untuk PPIC!', 'success');
+                    // Simpan state dulu sebelum reload
+                    // localStorage.setItem("forceReload", "1");
+                    location.reload()
                 }
             } catch (e) {
                 console.error("Gagal cek data baru:", e);
             }
         }
-
         setInterval(checkNewForPpic, 2000);
     </script>
 

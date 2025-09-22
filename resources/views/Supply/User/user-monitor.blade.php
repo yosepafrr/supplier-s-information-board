@@ -168,6 +168,10 @@
                     const data = await res.json();
 
                     if (!lastKnownUpdate || !lastKnownStatusHash) {
+
+                        // if (data.last_updated_at || data.status_hash) {
+                        //     location.reload();
+                        // }
                         lastKnownUpdate = data.last_updated_at;
                         lastKnownStatusHash = data.status_hash;
                     } else {
