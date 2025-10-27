@@ -79,30 +79,12 @@ class ProsesController extends Controller
     function monitor_user(Request $request)
     {
         $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
-
         // Ambil data panggilan terakhir
         $lastPanggilan = DB::table('panggilan')->latest('id')->first();
         $lastPanggilanId = $lastPanggilan ? $lastPanggilan->id : null;
 
-        $supplies = Supply::with('barang')
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('no_antrian')
-            ->get();
 
-        $flatenned = collect();
-        foreach ($supplies as $supply) {
-            foreach ($supply->barang as $barang) {
-                $flatenned->push([
-                    'supply' => $supply,
-                    'barang' => $barang,
-                ]);
-            }
-        }
-
-        $batches = $flatenned->chunk(6);
-
-
-        return view("supply.user.user-monitor", ['batches' => $batches], compact('lastPanggilanId', 'tanggal'));
+        return view("supply.user.user-monitor", compact('lastPanggilanId', 'tanggal'));
     }
 
     function registrasi()
@@ -177,5 +159,10 @@ class ProsesController extends Controller
             logger('Gagal simpan: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
+    }
+
+    public function showRekapitulasi()
+    {
+        return view("supply.rekapitulasi");
     }
 }

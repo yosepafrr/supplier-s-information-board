@@ -25,7 +25,7 @@
     <!-- CSS Files -->
     <link id="pagestyle" href="../../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
     <link rel="stylesheet" href="../../assets/css/custom.css">
-
+    @livewireStyles
     
 </head>
 
@@ -50,29 +50,41 @@
                         <span class="nav-link-text ms-1">Dashboard</span>
                     </a>
                 </li>
+                {{-- @if(in_array(auth()->user()?->role, ['super_admin', 'supplier', ])) --}}
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">User</h6>
                 </li>
+                {{-- @endif --}}
+                @if(in_array(auth()->user()?->role, ['super_admin']))
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('/register') }}">
+                        <i class="material-symbols-rounded opacity-5">person</i>
+                        <span class="nav-link-text ms-1">Tambah User Baru</span>
+                    </a>
+                </li>
+                @endif
                 @if(in_array(auth()->user()?->role, ['supplier', 'super_admin']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/user/reg') }}">
                         <i class="material-symbols-rounded opacity-5">checkbook</i>
-                        <span class="nav-link-text ms-1">Registrasi Tiket Antrian</span>
+                        <span class="nav-link-text ms-1">Registrasi Tiket Antrian Supplier</span>
                     </a>
                 </li>
                 @endif
-                @if(in_array(auth()->user()?->role, ['supplier', 'super_admin', 'admin_ppic', 'admin_qc']))
+                @if(in_array(auth()->user()?->role, ['supplier', 'super_admin', 'admin_ppic', 'admin_qc', 'qc_manager', 'ppic_manager']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/user/monitor') }}">
                         <i class="material-symbols-rounded opacity-5">browse_activity</i>
-                        <span class="nav-link-text ms-1">Monitoring Antrian User</span>
+                        <span class="nav-link-text ms-1">Monitoring Antrian Supplier</span>
                     </a>
                 </li>
                 @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_qc', 'admin_ppic', 'qc_manager', 'ppic_manager']))
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Admin</h6>
                 </li>
-                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_qc']))
+                @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_qc', 'qc_manager']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/admin/qc') }}">
                         <i class="material-symbols-rounded opacity-5">editor_choice</i>
@@ -80,7 +92,7 @@
                     </a>
                 </li>
                 @endif
-                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_ppic']))
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_ppic', 'ppic_manager']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/admin/ppic') }}">
                         <i class="material-symbols-rounded opacity-5">inventory_2</i>
@@ -88,7 +100,18 @@
                     </a>
                 </li>
                 @endif
-                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_ppic', 'admin_qc']))
+                @if(in_array(auth()->user()?->role, ['qc_manager', 'ppic_manager', 'super_admin']))
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Rekapitulasi</h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('rekapitulasi') }}">
+                        <i class="material-symbols-rounded opacity-5">insert_chart</i>
+                        <span class="nav-link-text ms-1">Rekapitulasi Jumlah Barang</span>
+                    </a>
+                </li> 
+                @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_ppic', 'admin_qc', 'qc_manager', 'ppic_manager',]))
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Arsip</h6>
                 </li>
@@ -263,6 +286,7 @@
     </div>
     </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@livewireScripts
 </body>
 <script src="../../assets/js/core/popper.min.js"></script>
 <script src="../../assets/js/core/bootstrap.min.js"></script>

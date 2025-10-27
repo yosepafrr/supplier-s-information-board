@@ -14,55 +14,12 @@ class AdminController extends Controller
 {
     public function qc(Request $request)
     {
-        $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
-
-        $supplies = Supply::with('barang')
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('no_antrian')
-            ->get();
-
-        $flatData = collect();
-        foreach ($supplies as $supply) {
-            foreach ($supply->barang as $barang) {
-                $flatData->push([
-                    'supply' => $supply,
-                    'barang' => $barang,
-                ]);
-            }
-        }
-
-
-        return view("supply.admin.qc", compact('flatData', 'tanggal'));
+        return view("supply.admin.qc");
     }
 
     public function ppic(Request $request)
     {
-        $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
-
-        $supplies = Supply::with(['barang' => function ($q) {
-            $q->orderBy('status_qc_updated_at', 'asc');
-        }])
-            ->whereDate('tanggal', $tanggal)
-            ->get();
-
-        $flatData = collect();
-        foreach ($supplies as $supply) {
-            foreach ($supply->barang as $barang) {
-                if ($barang->status === 'Ok' || $barang->status === 'Approved oleh PPIC') {
-                    $flatData->push([
-                        'supply' => $supply,
-                        'barang' => $barang,
-                    ]);
-                }
-            }
-        }
-
-        $flatData = $flatData->sortBy(function ($item) {
-            return $item['barang']->status_qc_updated_at;
-        })->values();
-
-
-        return view("supply.admin.ppic", compact('flatData', 'tanggal'));
+        return view("supply.admin.ppic");
     }
 
     public function approve(Request $request)

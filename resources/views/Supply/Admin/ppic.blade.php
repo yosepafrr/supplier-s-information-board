@@ -8,9 +8,9 @@
         <div id="notifAlert" class="alert-success alert-dismissible fade position-fixed top-0 end-0 m-3 d-none" role="alert"
             style="z-index: 9999; min-width: 400px; max-height: 200px;">
             <span id="notifAlertMessage" class="text-white mt-1">Pesan notifikasi</span>
-            <button class="btn btn-outline-white ml-5rem my-2" type="button" onClick="window.location.reload();">Refresh
-                Sekarang</button>
-            <button type="button" class="btn-close mt-2" onclick="hideNotif()" aria-label="Close">x</button>
+            {{-- <button class="btn btn-outline-white ml-5rem my-2" type="button" onClick="window.location.reload();">Refresh
+                Sekarang</button> --}}
+            <button type="button" class="btn-close" style="margin-top: -5px;" onclick="hideNotif()" aria-label="Close">x</button>
         </div>
         {{-- ALERT NOTIFICATION --}}
 
@@ -30,109 +30,8 @@
             </div>
         </div>
 
-        <div class="card mb-4 max-height-vh-70 overflow-y-auto" id="tableContainer">
-            <div class="table-responsive">
-                <table class="table align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-5">Antrian
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary px-2 mx-3 font-weight-bolder opacity-7 w-15">
-                                Supplier
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-10">Nama
-                                Driver
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10 px-2">Nomor Surat Jalan
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-10">Nama Barang
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-15">Aksi
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10">Status
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-10">
-                                </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $supplyRowspanCounter = [];
-                            foreach ($flatData as $item) {
-                                $id = $item['supply']->id;
-                                if (!isset($supplyRowspanCounter[$id])) {
-                                    $supplyRowspanCounter[$id] = 0;
-                                }
-                                $supplyRowspanCounter[$id]++;
-                            }
-                            $printed = [];
-                        @endphp
-
-                        @foreach ($flatData as $item)
-                            @php
-                                $supply = $item['supply'];
-                                $barang = $item['barang'];
-                            @endphp
-                            <tr>
-                                @if (!in_array($supply->id, $printed))
-                                    <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0" style="padding-left: 1.5rem;">{{ $supply->no_antrian }}</p>
-                                    </td>
-                                    <td class="py-3 px-" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0">{{ $supply->nama_perusahaan }}</p>
-                                    </td>
-                                    <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0">{{ $supply->nama_driver }}</p>
-                                    </td>
-                                    <td class="py-3" style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                        <p class="font-weight-bold mb-0">
-                                            @if ($supply->no_surat_jalan)
-                                                {{ $supply->no_surat_jalan }}
-                                            @else
-                                            <button type="button" class="btn btn-outline-secondary px-4"
-                                            data-bs-toggle="modal" data-bs-target="#approveModal" data-barang-id="{{ $barang->id }}" data-supply-id="{{ $supply->id }}"
-                                            onclick="setBarangId(this)">
-                                            Input Nomor
-                                            </button>    
-                                            @endif
-                                        </p>
-                                        </td>    
-                                    @php
-                                        $printed[] = $supply->id;
-                                    @endphp
-                                @endif
-                                <td class="py-3">
-                                    <p class="font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
-                                </td>
-                                <td class="py-3 px-0">
-                                    <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#detailModal"
-                                        onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
-                                        Detail Informasi
-                                    </button>
-                                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#confirmApproveModal" onclick="bukaModalApprove({{ $barang->id }})">Approve</button>
-                                </div>
-                                </td>
-                                <td class="py-3 px-4">
-                                    <p class="font-weight-bold mb-0">
-                                        @if ($barang->status_on_ppic)
-                                            {{ $barang->status_on_ppic }}
-                                        @else
-                                            <span class="fst-italic opacity-7">Belum ada status.</span>
-                                        @endif
-                                    </p>
-                                </td>
-                                <td class="py-3 px-0">
-                                    <button type="button" class="btn btn-outline-danger w-80" onclick="panggilBarang({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->no_antrian) }}')">
-                                        Panggil
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="card mb-4 max-height-vh-70">
+            <livewire:ppic-table />
         </div>
     </div>
 
@@ -242,7 +141,7 @@
 
 
             <div class="modal fade" id="confirmApproveModal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
                             <h5 class="modal-title font-weight-normal text-white">Approve barang?</h5>
@@ -402,7 +301,7 @@
             // Auto hide setelah 15 detik
             setTimeout(() => {
                 hideNotif();
-            }, 15000);
+            }, 5000);
         }
 
         function hideNotif() {
@@ -431,16 +330,15 @@
                 if (data.has_new && data.last_time !== lastPpicTime) {
                     localStorage.setItem("last_ppic_check_time", data.last_time);
                     lastPpicTime = data.last_time;
-                    // showNotif('Ada data baru untuk PPIC!', 'success');
-                    // Simpan state dulu sebelum reload
-                    // localStorage.setItem("forceReload", "1");
-                    location.reload()
+                    showNotif('Ada data baru untuk PPIC!', 'success');
+
+                    // location.reload()
                 }
             } catch (e) {
                 console.error("Gagal cek data baru:", e);
             }
         }
-        setInterval(checkNewForPpic, 2000);
+        setInterval(checkNewForPpic, 5000);
     </script>
 
     {{-- SCRIPT NOTIFICATION --}}

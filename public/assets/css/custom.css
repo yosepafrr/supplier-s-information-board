@@ -1,1 +1,8 @@
+.highlight {
+    border: 3px solid #4CAF50;
+    background-color: #d4d4d4;
+    transition: background 1s ease; /* supaya smooth */
+}
+
+
 

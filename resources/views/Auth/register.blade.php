@@ -51,9 +51,9 @@
                                     <option value="" disabled selected>Pilih Role</option>
                                     <option value="supplier" {{ old('role') == 'supplier' ? 'selected' : '' }}>Supplier</option>
                                     <option value="admin_qc" {{ old('role') == 'admin_qc' ? 'selected' : '' }}>Admin QC</option>
-                                    <option value="manager_qc" {{ old('role') == 'manager_qc' ? 'selected' : '' }}>Manager QC</option>
+                                    <option value="qc_manager" {{ old('role') == 'qc_manager' ? 'selected' : '' }}>Manager QC</option>
                                     <option value="admin_ppic" {{ old('role') == 'admin_ppic' ? 'selected' : '' }}>Admin PPIC</option>
-                                    <option value="manager_ppic" {{ old('role') == 'manager_ppic' ? 'selected' : '' }}>Manager PPIC</option>
+                                    <option value="ppic_manager" {{ old('role') == 'ppic_manager' ? 'selected' : '' }}>Manager PPIC</option>
                                     <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                                 </select>
                             </div>

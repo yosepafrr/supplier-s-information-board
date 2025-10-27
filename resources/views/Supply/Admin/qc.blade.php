@@ -8,9 +8,7 @@
         <div id="notifAlert" class="alert-success alert-dismissible fade position-fixed top-0 end-0 m-3 d-none" role="alert"
             style="z-index: 9999; min-width: 400px; max-height: 200px;">
             <span id="notifAlertMessage" class="text-white mt-1">Pesan notifikasi</span>
-            <button class="btn btn-outline-white ml-5rem my-2" type="button" onClick="window.location.reload();">Refresh
-                Sekarang</button>
-            <button type="button" class="btn-close mt-2" onclick="hideNotif()" aria-label="Close">x</button>
+            <button type="button" class="btn-close" style="margin-top: -5px" onclick="hideNotif()" aria-label="Close">x</button>
         </div>
         {{-- ALERT NOTIFICATION --}}
 
@@ -32,103 +30,7 @@
         </div>
 
         <div class="card mb-4 max-height-vh-70">
-            <div class="table-responsive">
-                <table class="table align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-5">Antrian
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary px-2 mx-3 font-weight-bolder opacity-7 w-15">
-                                Supplier
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-10">Nama
-                                Driver
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-10">Nama Barang
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">Aksi
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10">Status
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">
-                                Catatan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $supplyRowspanCounter = [];
-                            foreach ($flatData as $item) {
-                                $id = $item['supply']->id;
-                                if (!isset($supplyRowspanCounter[$id])) {
-                                    $supplyRowspanCounter[$id] = 0;
-                                }
-                                $supplyRowspanCounter[$id]++;
-                            }
-                            $printed = [];
-                        @endphp
-
-                        @foreach ($flatData as $item)
-                            @php
-                                $supply = $item['supply'];
-                                $barang = $item['barang'];
-                            @endphp
-                            <tr>
-                                @if (!in_array($supply->id, $printed))
-                                    <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0" style="padding-left: 1.5rem;">{{ $supply->no_antrian }}</p>
-                                    </td>
-                                    <td class="py-3 px-" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0">{{ $supply->nama_perusahaan }}</p>
-                                    </td>
-                                    <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0">{{ $supply->nama_driver }}</p>
-                                    </td>
-                                    @php
-                                        $printed[] = $supply->id;
-                                    @endphp
-                                @endif
-                                <td class="py-3">
-                                    <p class="font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
-                                </td>
-                                <td class="py-3 px-0">
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#detailModal"
-                                        onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
-                                        Detail Informasi
-                                    </button>
-                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-success px-4"
-                                        data-bs-toggle="modal" data-bs-target="#hasilModal" data-barang-id="{{ $barang->id }}"
-                                        onclick="setBarangId(this)">
-                                        Hasil
-                                    </button>
-                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-primary"
-                                        onclick="panggilBarang({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->no_antrian) }}')">Panggil</button>
-                                </td>
-                                <td class="py-3 px-4">
-                                    <p class="font-weight-bold mb-0">
-                                        @if ($barang->status)
-                                            {{ $barang->status }}
-                                        @else
-                                            <span class="fst-italic opacity-7">Belum ada status.</span>
-                                        @endif
-                                    </p>
-                                </td>
-                                <td class="py-3"
-                                    style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ">
-                                    <p class="font-weight-bold mb-0">
-                                        @if ($barang->keterangan)
-                                            {{ $barang->keterangan }}
-                                        @else
-                                            <span class="fst-italic opacity-7">Tanpa catatan.</span>
-                                        @endif
-                                    </p>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <livewire:qc-table />
                 {{-- MODAL PREVIEW FOTO --}}
                     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -146,8 +48,23 @@
                     </div>
                     </div>
                 {{-- MODAL PREVIEW FOTO --}}
+                    {{-- MODAL PREVIEW FOTO PADA TABEL --}}
+                    <div class="modal fade" id="PreviewImageModalQc" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content text-gray-800">
+                        <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                            <span>Preview Foto</span>
+                            <i class="material-symbols-rounded cursor-pointer end-0 text-2xl" data-bs-dismiss="modal" aria-label="Close">close</i>
+                        </div>
 
-            </div>
+                        <!-- Pindahkan ke modal-body -->
+                        <div class="modal-body text-center position-relative pt-0">
+                            <img alt="Preview" class="img-fluid rounded w-100" id="modalImgPreview">
+                        </div>
+                        </div>
+                    </div>
+                {{-- MODAL PREVIEW FOTO PADA TABEL --}}
+
         </div>
     </div>
 
@@ -450,6 +367,8 @@
         </div>
     </div>
 
+    
+
 
     {{-- MODAL MAKE SURE PEMANGGILAN --}}
     <script>
@@ -568,7 +487,7 @@
             // Auto hide setelah 15 detik
             setTimeout(() => {
                 hideNotif();
-            }, 15000);
+            }, 5000);
         }
 
         function hideNotif() {
@@ -597,18 +516,20 @@
                 if (data.has_new && data.last_time !== lastQcTime) {
                     localStorage.setItem("last_qc_check_time", data.last_time);
                     lastQcTime = data.last_time;
-                    // showNotif('Ada data baru untuk Quality Control!', 'success');
-                    location.reload()
+                    showNotif('Ada data baru untuk Quality Control!', 'success');
+                    // location.reload()
                 }
             } catch (e) {
                 console.error("Gagal cek data baru:", e);
             }
         }
 
-        setInterval(checkNewForQc, 2000);
+        setInterval(checkNewForQc, 5000);
     </script>
-
     {{-- SCRIPT NOTIFICATION --}}
+
+
+    {{-- SCRIPT MODAL PREVIEW BARANG --}}
 
 
 

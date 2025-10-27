@@ -13,37 +13,10 @@ class ArsipController extends Controller
 {
     public function arsipNg(Request $request)
     {
-        // Ambil tanggal dari request (jika ada), atau biarkan NULL untuk menampilkan semua
-        $tanggal = $request->tanggal;
-
-            $query = DB::table('barang')
-                ->join('supply', 'barang.supply_id', '=', 'supply.id')
-                ->where('status', 'Not Good')
-                ->orderByDesc('status_qc_updated_at');
-
-            if ($tanggal) {
-                $query->whereDate('supply.tanggal', $tanggal);
-            }
-
-            $arsip = $query->get();
-            return view('arsip.ng', compact('arsip', 'tanggal'));
+            return view('arsip.ng');
     }
     public function arsipHold(Request $request)
     {
-        // Ambil tanggal dari request (jika ada), atau biarkan NULL untuk menampilkan semua
-        $tanggal = $request->tanggal;
-
-        $query = DB::table('barang')
-            ->join('supply', 'barang.supply_id', '=', 'supply.id')
-            ->where('status', 'Hold')
-            ->orderByDesc('status_qc_updated_at');
-
-        if ($tanggal) {
-            $query->whereDate('supply.tanggal', $tanggal);
-        }
-
-        $arsip = $query->get();
-
-        return view('arsip.hold', compact('arsip', 'tanggal'));
+        return view('arsip.hold');
     }
 }
