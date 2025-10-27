@@ -8,9 +8,7 @@
         <div id="notifAlert" class="alert-success alert-dismissible fade position-fixed top-0 end-0 m-3 d-none" role="alert"
             style="z-index: 9999; min-width: 400px; max-height: 200px;">
             <span id="notifAlertMessage" class="text-white mt-1">Pesan notifikasi</span>
-            <button class="btn btn-outline-white ml-5rem my-2" type="button" onClick="window.location.reload();">Refresh
-                Sekarang</button>
-            <button type="button" class="btn-close mt-2" onclick="hideNotif()" aria-label="Close">x</button>
+            <button type="button" class="btn-close" style="margin-top: -5px" onclick="hideNotif()" aria-label="Close">x</button>
         </div>
         {{-- ALERT NOTIFICATION --}}
 
@@ -32,104 +30,41 @@
         </div>
 
         <div class="card mb-4 max-height-vh-70">
-            <div class="table-responsive">
-                <table class="table align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-5">Antrian
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary px-2 mx-3 font-weight-bolder opacity-7 w-15">
-                                Supplier
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary px-0 font-weight-bolder opacity-7 w-10">Nama
-                                Driver
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 w-10">Nama Barang
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">Aksi
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7  w-10">Status
-                            </th>
-                            <th class="text-uppercase text-xxs text-secondary font-weight-bolder opacity-7 px-0 w-20">
-                                Catatan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                            $supplyRowspanCounter = [];
-                            foreach ($flatData as $item) {
-                                $id = $item['supply']->id;
-                                if (!isset($supplyRowspanCounter[$id])) {
-                                    $supplyRowspanCounter[$id] = 0;
-                                }
-                                $supplyRowspanCounter[$id]++;
-                            }
-                            $printed = [];
-                        @endphp
+                <livewire:qc-table />
+                {{-- MODAL PREVIEW FOTO --}}
+                    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content text-gray-800">
+                        <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                            <span>Preview Foto</span>
+                            <i class="material-symbols-rounded cursor-pointer end-0 text-2xl">close</i>
+                        </div>
 
-                        @foreach ($flatData as $item)
-                            @php
-                                $supply = $item['supply'];
-                                $barang = $item['barang'];
-                            @endphp
-                            <tr>
-                                @if (!in_array($supply->id, $printed))
-                                    <td class="py-3" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0" style="padding-left: 1.5rem;">{{ $supply->no_antrian }}</p>
-                                    </td>
-                                    <td class="py-3 px-" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0">{{ $supply->nama_perusahaan }}</p>
-                                    </td>
-                                    <td class="py-3 px-0" rowspan="{{ $supplyRowspanCounter[$supply->id] }}">
-                                        <p class="font-weight-bold mb-0">{{ $supply->nama_driver }}</p>
-                                    </td>
-                                    @php
-                                        $printed[] = $supply->id;
-                                    @endphp
-                                @endif
-                                <td class="py-3">
-                                    <p class="font-weight-bold mb-0 mx-3">{{ $barang->nama_barang }}</p>
-                                </td>
-                                <td class="py-3 px-0">
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#detailModal"
-                                        onclick="showDetail({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($barang->jumlah_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->nopol) }}', '{{ e($supply->no_antrian) }}', '{{ e($supply->jam) }}', '{{ e($supply->tanggal) }}')">
-                                        Detail Informasi
-                                    </button>
-                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-success px-4"
-                                        data-bs-toggle="modal" data-bs-target="#hasilModal" data-barang-id="{{ $barang->id }}"
-                                        onclick="setBarangId(this)">
-                                        Hasil
-                                    </button>
-                                    <button style="margin-left: 5px;" type="button" class="btn btn-outline-primary"
-                                        onclick="panggilBarang({{ $barang->id }}, '{{ e($barang->nama_barang) }}', '{{ e($supply->nama_perusahaan) }}', '{{ e($supply->nama_driver) }}', '{{ e($supply->no_antrian) }}')">Panggil</button>
-                                </td>
-                                <td class="py-3 px-4">
-                                    <p class="font-weight-bold mb-0">
-                                        @if ($barang->status)
-                                            {{ $barang->status }}
-                                        @else
-                                            <span class="fst-italic opacity-7">Belum ada status.</span>
-                                        @endif
-                                    </p>
-                                </td>
-                                <td class="py-3"
-                                    style="max-width: 6.25rem; word-wrap: break-word; white-space: normal;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ">
-                                    <p class="font-weight-bold mb-0">
-                                        @if ($barang->keterangan)
-                                            {{ $barang->keterangan }}
-                                        @else
-                                            <span class="fst-italic opacity-7">Tanpa catatan.</span>
-                                        @endif
-                                    </p>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        <!-- Pindahkan ke modal-body -->
+                        <div class="modal-body text-center position-relative pt-0">
+                            <img alt="Preview" class="img-fluid rounded w-100" id="modalImg">
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                {{-- MODAL PREVIEW FOTO --}}
+                    {{-- MODAL PREVIEW FOTO PADA TABEL --}}
+                    <div class="modal fade" id="PreviewImageModalQc" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content text-gray-800">
+                        <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                            <span>Preview Foto</span>
+                            <i class="material-symbols-rounded cursor-pointer end-0 text-2xl" data-bs-dismiss="modal" aria-label="Close">close</i>
+                        </div>
+
+                        <!-- Pindahkan ke modal-body -->
+                        <div class="modal-body text-center position-relative pt-0">
+                            <img alt="Preview" class="img-fluid rounded w-100" id="modalImgPreview">
+                        </div>
+                        </div>
+                    </div>
+                {{-- MODAL PREVIEW FOTO PADA TABEL --}}
+
         </div>
     </div>
 
@@ -162,7 +97,7 @@
         </div>
     </div>
 
-    {{-- MODAL JIKA HASIL NG ATAU HOLD APAKAH INGIN MENAMBAHKAN CATATAN? --}}
+    {{-- MODAL JIKA HASIL NG ATAU HOLD APAKAH INGIN MENAMBAHKAN CATATAN DAN FOTO BARANG --}}
     <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" action="{{ route('supply.admin.qc.updateStatus') }}">
@@ -172,19 +107,37 @@
 
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Tambahkan Catatan?</h5>
+                        <h5 class="modal-title">Tambahkan Catatan dan Foto Barang?</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Apakah Anda ingin menambahkan catatan?</p>
+                        <p>Apakah Anda ingin menambahkan catatan dan foto barang?</p>
                         <div class="input-group input-group-dynamic mb-4 d-none" id="input-catatan-wrapper">
                             <textarea class="form-control" name="catatan" id="catatan" placeholder="Ketik catatan disini"
                                 aria-label="Username" aria-describedby="basic-addon1" rows="3"></textarea>
                         </div>
+
+                        {{-- Input foto --}}
+                        <div class="mb-3 d-none" id="foto-upload-wrapper">
+                            <label for="foto">Ambil Foto Barang</label>
+                            <div class="d-flex flex-grow-row">
+                                <div class="position-relative" style="display:inline-block;">
+                                    <video id="video" width="640" height="480" autoplay></video>
+                                    <button type="button" class="btn position-absolute bottom-0 p-3  start-50 translate-middle-x mb-5" id="capture" style="border-radius: 16rem; background: #404a6b;"><i class="material-symbols-rounded" style="font-size: 40px; color: white;">photo_camera</i></button>
+                                </div>
+                                <div class="ms-3">
+                                    <canvas id="canvas" width="1440" height="1080" style="display: none;"></canvas>
+
+                                    <div id="preview-container" class="mb-3"></div>
+                                    <div id="input-container" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="skipCatatan()">Tidak</button>
-                        <button type="button" class="btn btn-primary" onclick="showCatatanInput()">Ya</button>
+                        <button type="button" class="btn btn-secondary" onclick="skipCatatan()">Tanpa Catatan</button>
+                        <button type="button" class="btn btn-primary" id="show-catatan-input-btn" onclick="showCatatanInput()">Ya</button>
                         <button type="submit" class="btn btn-success d-none" id="submit-catatan-btn">Kirim</button>
                     </div>
                 </div>
@@ -195,7 +148,7 @@
     {{-- MODAL HASIL --}}
 
 
-    {{-- MODAL FIELD CATATAN JIKA INGIN MENAMBAHKAN CATATAN --}}
+    {{-- MODAL FIELD CATATAN --}}
     <script>
         let currentBarangId = null;
 
@@ -228,22 +181,126 @@
         function showCatatanInput() {
             document.getElementById('input-catatan-wrapper').classList.remove('d-none');
             document.getElementById('submit-catatan-btn').classList.remove('d-none');
+            document.getElementById('show-catatan-input-btn').classList.add('d-none');
+            document.getElementById('foto-upload-wrapper').classList.remove('d-none');
+            document.querySelector('#modalKonfirmasi .modal-content').style = 'width: 80vw; margin-left: -30vw;';
         }
 
-        function skipCatatan() {
-            // langsung kirim form tanpa catatan
-            document.getElementById('catatan').value = '';
-            document.querySelector('#modalKonfirmasi form').submit();
+            function skipCatatan() {
+                // langsung kirim form tanpa catatan
+                document.getElementById('catatan').value = '';
+                document.querySelector('#modalKonfirmasi form').submit();
 
         }
     </script>
     {{-- MODAL FIELD CATATAN JIKA INGIN MENAMBAHKAN CATATAN --}}
 
+    {{-- FUNGSI AMBIL GAMBAR VIA KAMERA --}}
+        <script>
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const fotoInput = document.getElementById('fotoInput');
+            const captureBtn = document.getElementById('capture');
+            const previewContainer = document.getElementById('preview-container');
+            const inputContainer = document.getElementById('input-container');
+            
+            
+            const modalImg = document.getElementById('modalImg');
+            const imageModal = document.getElementById('imageModal');
+
+
+            // Minta izin akses kamera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Kamera tidak bisa di akses: ", err);
+                })
+
+
+            // Ambil gambar saat tombol ditekan
+            captureBtn.addEventListener('click', () => {
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Konversi gambar ke format base64
+                const dataUrl = canvas.toDataURL('image/png');
+
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('position-relative', 'd-inline-block', 'me-2', 'mb-2');
+
+
+                // Tampilkan preview
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.style = 'height: 236px; width: auto; cursor: pointer;';
+                // document.getElementById('preview-container').appendChild(img);
+
+                // cara Bootstrap native
+                img.setAttribute('data-bs-toggle', 'modal');
+                img.setAttribute('data-bs-target', '#imageModal');
+
+                img.addEventListener('click', () => {
+                    modalImg.src = dataUrl;
+                    imageModal.show();
+                });
+
+                    const imageModalEl = document.getElementById('imageModal');
+
+                    imageModalEl.addEventListener('shown.bs.modal', () => {
+                        const handleClick = (e) => {
+                            // Abaikan klik tombol close (biar tetap bisa nutup modal normal)
+                            if (!e.target.closest('.btn-close')) {
+                                const konfirmasiModal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
+                                konfirmasiModal.show();
+
+                                // Opsional: tutup imageModal setelah konfirmasi muncul
+                                const imgModal = bootstrap.Modal.getInstance(imageModalEl);
+                                imgModal.hide();
+
+                                // Hapus listener biar tidak nambah-nambah
+                                document.removeEventListener('click', handleClick);
+                            }
+                        };
+
+                        // Tambahkan listener klik di seluruh layar
+                        document.addEventListener('click', handleClick);
+                    });
+
+            // Tombol delete (akan menempel di pojok atas gambar)
+                const delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'position-absolute', 'top-0', 'end-0', 'm-1');
+                delBtn.innerHTML = 'x'; // pakai icon kecil biar rapi
+                delBtn.onclick = () => {
+                    previewContainer.removeChild(wrapper);
+                    inputContainer.removeChild(input);
+                };
+
+                // Input hidden
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'foto[]';
+                input.value = dataUrl;
+
+                // Susun
+                wrapper.appendChild(img);
+                wrapper.appendChild(delBtn);
+                previewContainer.appendChild(wrapper);
+                inputContainer.appendChild(input);
+
+                canvas.classList.remove('d-none');            
+            })
+
+        </script>
+    {{-- FUNGSI AMBIL GAMBAR VIA KAMERA --}}
+
 
     <!-- MODAL DETAIL INFORMASI -->
-    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+            aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Detail Informasi</h5>
@@ -310,6 +367,8 @@
         </div>
     </div>
 
+    
+
 
     {{-- MODAL MAKE SURE PEMANGGILAN --}}
     <script>
@@ -326,9 +385,9 @@
             // Set pesan di modal
             document.getElementById('pesanKonfirmasiPanggilan').innerText =
                 `Apakah Anda yakin ingin memanggil: 
-                                                                                                                    Driver ${driver} 
-                                                                                                                    Dengan barang ${namaBarang} 
-                                                                                                                    Dari ${supplier}?`;
+                    Driver ${driver} 
+                    Dengan barang ${namaBarang} 
+                    Dari ${supplier}?`;
 
             // Tampilkan modal
             const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasiPanggilan'));
@@ -346,8 +405,8 @@
                     barang_id: barangIdTerpilih,
                     dari: 'QC',
                     pesan: `No Antrian ${nomorAntrian} 
-                                                                                                                ${namaBarangTerpilih} dari ${namaSupplier} oleh ${namaDriver}
-                                                                                                                Silahkan menuju counter QC` // Pesan panggilan
+                    ${namaBarangTerpilih} dari ${namaSupplier} oleh ${namaDriver}
+                    Silahkan menuju counter QC` // Pesan panggilan
                 })
             })
                 .then(response => response.json())
@@ -428,7 +487,7 @@
             // Auto hide setelah 15 detik
             setTimeout(() => {
                 hideNotif();
-            }, 15000);
+            }, 5000);
         }
 
         function hideNotif() {
@@ -458,16 +517,19 @@
                     localStorage.setItem("last_qc_check_time", data.last_time);
                     lastQcTime = data.last_time;
                     showNotif('Ada data baru untuk Quality Control!', 'success');
+                    // location.reload()
                 }
             } catch (e) {
                 console.error("Gagal cek data baru:", e);
             }
         }
 
-        setInterval(checkNewForQc, 2000);
+        setInterval(checkNewForQc, 5000);
     </script>
-
     {{-- SCRIPT NOTIFICATION --}}
+
+
+    {{-- SCRIPT MODAL PREVIEW BARANG --}}
 
 
 

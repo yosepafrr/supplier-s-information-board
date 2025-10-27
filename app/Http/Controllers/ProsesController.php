@@ -79,30 +79,12 @@ class ProsesController extends Controller
     function monitor_user(Request $request)
     {
         $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
-
         // Ambil data panggilan terakhir
         $lastPanggilan = DB::table('panggilan')->latest('id')->first();
         $lastPanggilanId = $lastPanggilan ? $lastPanggilan->id : null;
 
-        $supplies = Supply::with('barang')
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('no_antrian')
-            ->get();
 
-        $flatenned = collect();
-        foreach ($supplies as $supply) {
-            foreach ($supply->barang as $barang) {
-                $flatenned->push([
-                    'supply' => $supply,
-                    'barang' => $barang,
-                ]);
-            }
-        }
-
-        $batches = $flatenned->chunk(6);
-
-
-        return view("supply.user.user-monitor", ['batches' => $batches], compact('lastPanggilanId', 'tanggal'));
+        return view("supply.user.user-monitor", compact('lastPanggilanId', 'tanggal'));
     }
 
     function registrasi()
@@ -119,11 +101,10 @@ class ProsesController extends Controller
             // MEMBUAT NOMOR ANTRIAN YANG RESET DI JAM TERTENTU
             // Jam reset: setiap hari jam 23:59
             $now = Carbon::now('Asia/Jakarta');
-            $resetTime = Carbon::today('Asia/Jakarta')->setTIme(23, 59);
+            $resetTime = Carbon::today('Asia/Jakarta')->setTime(23, 59);
 
-            // Jika sekarang masih sebelum jam 16:00, maka resetTime adalah kemarin jam 16:00
             if ($now->lessThan($resetTime)) {
-                $resetTime = $resetTime->subDay(); // resetTime jadi kemarin 16:00
+                $resetTime = $resetTime->subDay(); // resetTime jadi kemarin 23:59
             }
 
             // Cari antrian terakhir setelah waktu reset
@@ -178,5 +159,10 @@ class ProsesController extends Controller
             logger('Gagal simpan: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
+    }
+
+    public function showRekapitulasi()
+    {
+        return view("supply.rekapitulasi");
     }
 }

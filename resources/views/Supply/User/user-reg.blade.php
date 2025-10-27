@@ -7,7 +7,7 @@
         {{-- ALERT --}}
         @if (session('success'))
             <div class="alert alert-success text-white show" role="alert" id="success-alert">
-                <strong>Registrasi berhasil !</strong> Anda bisa memantau tiket anda di bagian monitoring untuk user.
+                <strong>Registrasi berhasil !</strong> Anda bisa memantau tiket anda di bagian monitoring untuk supplier.
             </div>
 
             <script>

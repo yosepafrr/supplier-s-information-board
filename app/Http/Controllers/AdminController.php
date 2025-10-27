@@ -8,53 +8,18 @@ use App\Models\Supply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
     public function qc(Request $request)
     {
-        $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
-
-        $supplies = Supply::with('barang')
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('no_antrian')
-            ->get();
-
-        $flatData = collect();
-        foreach ($supplies as $supply) {
-            foreach ($supply->barang as $barang) {
-                $flatData->push([
-                    'supply' => $supply,
-                    'barang' => $barang,
-                ]);
-            }
-        }
-
-        return view("supply.admin.qc", compact('flatData', 'tanggal'));
+        return view("supply.admin.qc");
     }
 
     public function ppic(Request $request)
     {
-        $tanggal = $request->tanggal ?? Carbon::today("Asia/Jakarta");
-
-        $supplies = Supply::with('barang')
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('no_antrian')
-            ->get();
-
-        $flatData = collect();
-        foreach ($supplies as $supply) {
-            foreach ($supply->barang as $barang) {
-                if ($barang->status === 'Ok' || $barang->status === 'Approved oleh PPIC') {
-                    $flatData->push([
-                        'supply' => $supply,
-                        'barang' => $barang,
-                    ]);
-                }
-            }
-        }
-
-        return view("supply.admin.ppic", compact('flatData', 'tanggal'));
+        return view("supply.admin.ppic");
     }
 
     public function approve(Request $request)
@@ -86,50 +51,35 @@ class AdminController extends Controller
             $barang->progress_status = 'On Progress PPIC';
         } elseif ($status === 'Not Good') {
             $barang->progress_status = 'Status Barang: Not Good';
-
-            // Simpan ke arsip_ng
-            $supply = Supply::findOrFail($barang->supply_id);
-            DB::table('arsip_ng')->insert([
-                'barang_id' => $barang->id,
-                'supply_id' => $supply->id,
-                'tanggal_masuk' => $supply->tanggal,
-                'jam_masuk' => $supply->jam,
-                'nama_barang' => $barang->nama_barang,
-                'jumlah_barang' => $barang->jumlah_barang,
-                'nama_perusahaan' => $supply->nama_perusahaan,
-                'nama_driver' => $supply->nama_driver,
-                'nopol' => $supply->nopol,
-                'keterangan' => $request->catatan,
-                'tanggal_update_qc' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
         } elseif ($status === 'Hold') {
             $barang->progress_status = 'Status Barang: Hold';
-
-            // Simpan ke arsip_hold
-            $supply = Supply::findOrFail($barang->supply_id);
-            DB::table('arsip_hold')->insert([
-                'barang_id' => $barang->id,
-                'supply_id' => $supply->id,
-                'tanggal_masuk' => $supply->tanggal,
-                'jam_masuk' => $supply->jam,
-                'nama_barang' => $barang->nama_barang,
-                'jumlah_barang' => $barang->jumlah_barang,
-                'nama_perusahaan' => $supply->nama_perusahaan,
-                'nama_driver' => $supply->nama_driver,
-                'nopol' => $supply->nopol,
-                'keterangan' => $request->catatan,
-                'tanggal_update_qc' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
         }
 
+        // === Foto handling ===
+        if ($request->has('foto')) {
+            $fotoPaths = [];
+
+            foreach ($request->foto as $foto) {
+                $image = str_replace('data:image/png;base64,', '', $foto);
+                $image = str_replace(' ', '+', $image);
+                $imageName = uniqid() . '.png';
+
+                Storage::disk('public')->put('foto_barang/' . $imageName, base64_decode($image));
+
+                $fotoPaths[] = 'foto_barang/' . $imageName;
+            }
+
+            // Kalau sebelumnya sudah ada foto, gabungkan
+            $existingPhotos = $barang->foto_barang ? json_decode($barang->foto_barang, true) : [];
+            $barang->foto_barang = json_encode(array_merge($existingPhotos, $fotoPaths));
+        }
+
+        
         $barang->save();
 
         return redirect()->back()->with('success', 'Status barang berhasil diperbarui.');
     }
+
     public function inputSuratJalan(Request $request)
     {
         // Update Supply

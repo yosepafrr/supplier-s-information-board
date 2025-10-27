@@ -24,6 +24,9 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/custom.css">
+    @livewireStyles
+    
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -47,72 +50,68 @@
                         <span class="nav-link-text ms-1">Dashboard</span>
                     </a>
                 </li>
+                {{-- @if(in_array(auth()->user()?->role, ['super_admin', 'supplier', ])) --}}
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">User</h6>
                 </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link text-dark" data-bs-toggle="collapse" href="#menuDelivery" role="button"
-                        aria-expanded="false" aria-controls="menuDelivery" href="../pages/billing.html">
-                        <i class="material-symbols-rounded opacity-5">home_app_logo</i>
-                        <span class="nav-link-text ms-1">Dashboard</span>
+                {{-- @endif --}}
+                @if(in_array(auth()->user()?->role, ['super_admin']))
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('/register') }}">
+                        <i class="material-symbols-rounded opacity-5">person</i>
+                        <span class="nav-link-text ms-1">Tambah User Baru</span>
                     </a>
-                    <div class="collapse" id="menuDelivery">
-                        <ul class="nav ms-4 ps-3">
-
-                            <!-- Packing Individual -->
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" data-bs-toggle="collapse" href="#packingIndividual"
-                                    role="button" aria-expanded="false" aria-controls="packingIndividual">
-                                    <i class="material-symbols-rounded opacity-5">person</i>
-                                    Packing Individual
-                                </a>
-                                <div class="collapse" id="packingIndividual">
-                                    <ul class="nav ms-4 ps-3">
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" href="#">
-                                                <i class="material-symbols-rounded opacity-5">label</i>
-                                                Preparation
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" href="#">
-                                                <i class="material-symbols-rounded opacity-5">schedule</i>
-                                                Packing List
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
+                </li>
+                @endif
+                @if(in_array(auth()->user()?->role, ['supplier', 'super_admin']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/user/reg') }}">
                         <i class="material-symbols-rounded opacity-5">checkbook</i>
-                        <span class="nav-link-text ms-1">Registrasi Tiket Antrian</span>
+                        <span class="nav-link-text ms-1">Registrasi Tiket Antrian Supplier</span>
                     </a>
                 </li>
+                @endif
+                @if(in_array(auth()->user()?->role, ['supplier', 'super_admin', 'admin_ppic', 'admin_qc', 'qc_manager', 'ppic_manager']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/user/monitor') }}">
                         <i class="material-symbols-rounded opacity-5">browse_activity</i>
-                        <span class="nav-link-text ms-1">Monitoring Antrian User</span>
+                        <span class="nav-link-text ms-1">Monitoring Antrian Supplier</span>
                     </a>
                 </li>
+                @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_qc', 'admin_ppic', 'qc_manager', 'ppic_manager']))
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Admin</h6>
                 </li>
+                @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_qc', 'qc_manager']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/admin/qc') }}">
                         <i class="material-symbols-rounded opacity-5">editor_choice</i>
                         <span class="nav-link-text ms-1">Quality Control</span>
                     </a>
                 </li>
+                @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_ppic', 'ppic_manager']))
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{{ asset('/supply/admin/ppic') }}">
                         <i class="material-symbols-rounded opacity-5">inventory_2</i>
                         <span class="nav-link-text ms-1">PPIC</span>
                     </a>
                 </li>
+                @endif
+                @if(in_array(auth()->user()?->role, ['qc_manager', 'ppic_manager', 'super_admin']))
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Rekapitulasi</h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{{ asset('rekapitulasi') }}">
+                        <i class="material-symbols-rounded opacity-5">insert_chart</i>
+                        <span class="nav-link-text ms-1">Rekapitulasi Jumlah Barang</span>
+                    </a>
+                </li> 
+                @endif
+                @if(in_array(auth()->user()?->role, ['super_admin', 'admin_ppic', 'admin_qc', 'qc_manager', 'ppic_manager',]))
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-xs text-dark font-weight-bolder opacity-5">Arsip</h6>
                 </li>
@@ -128,6 +127,7 @@
                         <span class="nav-link-text ms-1">Arsip Hold</span>
                     </a>
                 </li>
+                @endif
                 <hr class="horizontal dark my-0 mt-9">
                 <hr class="horizontal dark my-0 mb-2">
                 <li class="nav-item">
@@ -176,12 +176,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm">
-                            <a class="opacity-7 text-dark" href="{{ asset('/supply/user/reg') }}">
-                                Registrasi
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item text-sm"><a class="opacity-7 text-dark"
-                                href="{{ asset('/supply/user/monitor') }}">Monitor User</a>
+                            Sistem Informasi Antrian Supplier
                         </li>
                         <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
                             <strong>{{ Auth::check() && Auth::user()->name ? Auth::user()->name : 'Visitor' }}</strong>
@@ -290,7 +285,8 @@
         </div>
     </div>
     </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@livewireScripts
 </body>
 <script src="../../assets/js/core/popper.min.js"></script>
 <script src="../../assets/js/core/bootstrap.min.js"></script>

@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin QC',
             'email' => 'qc@aski.user.com',
             'password' => Hash::make('qcpassword123'),
-            'role' => 'admin_qc', // atau 'admin', 'user', dll sesuai kebutuhan
+            'role' => 'admin_qc', 
         ]);
 
         User::create([
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Supplier',
             'email' => 'supplier@aski.user.com',
             'password' => Hash::make('supplierpassword123'),
-            'role' => 'user',
+            'role' => 'supplier',
         ]);
     }
 }
